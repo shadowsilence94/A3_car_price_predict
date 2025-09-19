@@ -1,0 +1,11 @@
+dash
+pandas
+numpy
+scikit-learn==1.5.1
+plotly
+matplotlib
+joblib
+mlflow
+pytest
+dash-bootstrap-components
+flake8

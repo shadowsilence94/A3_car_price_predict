@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pytest
+.pytest_cache/
+
+# MacOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# MLflow
+mlruns/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Screenshots (keep only essential ones)
+Screenshot*.png
+
+# Model artifacts (keep only final ones)
+*_model_artifacts.pkl
+
+# Temporary scripts
+create_model_first.py
+register_model_manual.py
+verify_model.py
+run_tests.py
+deploy.py
+manual_registration_guide.md
+COMPLETION_CHECKLIST.md
