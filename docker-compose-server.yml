@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  web:
+    command: python app/app.py
+    image: shadowsilence94/car-price-predit:a3
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8050
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.web-st126010.loadbalancer.server.port=8050
+      - traefik.http.routers.web-st126010.rule=Host(`st126010.ml.brain.cs.ait.ac.th`)
+      - traefik.http.routers.web-st126010.entrypoints=websecure
+      - traefik.http.routers.web-st126010.tls.certresolver=myresolver
+    networks:
+      - default
+      - traefik_default
+
+networks:
+  default:
+  traefik_default:
+    external: true

@@ -1,4 +1,3 @@
-# Dockerfile for car price classification app
 FROM python:3.10-slim
 
 WORKDIR /app
@@ -6,6 +5,7 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
@@ -22,6 +22,7 @@ EXPOSE 8050
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app
 
-# Run the enhanced Dash application
+# Run the application
 CMD ["python", "app/app.py"]
