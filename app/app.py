@@ -46,13 +46,13 @@ try:
 except:
     data = pd.DataFrame()
 
-# Model comparison data (updated with final results)
+# Model comparison data (aligned with current results)
 model_comparison = pd.DataFrame({
     'Assignment': ['A1', 'A2', 'A3'],
     'Model Type': ['Linear Regression', 'Enhanced Linear Regression', 'Logistic Classification'],
     'Problem Type': ['Regression', 'Regression', 'Classification'],
-    'Best Score': ['R² = 0.6040', 'R² = 0.8472', 'Accuracy = 70.48%'],
-    'Key Features': ['Basic implementation + proper pipeline', 'Polynomial features + Lasso + proper pipeline', 'Custom metrics + MLflow + CI/CD + proper pipeline']
+    'Best Score': ['R² = 0.6040', 'R² = 0.9101', 'Accuracy = 73.99%'],
+    'Key Features': ['Basic implementation + proper pipeline', 'Polynomial features + Lasso regularization', 'Logical price boundaries + simplified features']
 })
 
 # Initialize app
@@ -130,8 +130,8 @@ def render_content(active_tab):
                             id='model-dropdown',
                             options=[
                                 {'label': 'A1 - Linear Regression (R² = 0.6040)', 'value': 'A1'},
-                                {'label': 'A2 - Enhanced Linear Regression (R² = 0.8472)', 'value': 'A2'},
-                                {'label': 'A3 - Logistic Classification (70.48% accuracy)', 'value': 'A3'}
+                                {'label': 'A2 - Enhanced Linear Regression (R² = 0.9101)', 'value': 'A2'},
+                                {'label': 'A3 - Logistic Classification (73.99% accuracy)', 'value': 'A3'}
                             ],
                             value='A3'
                         ),
@@ -211,20 +211,21 @@ def render_content(active_tab):
 
 def create_comparison_chart():
     models_list = ['A1 Linear', 'A2 Enhanced', 'A3 Classification']
-    scores = [0.9425, 0.8336, 0.797]  # Updated scores
+    scores = [0.6040, 0.9101, 0.7399]  # Correct A3 score from notebook
     
     fig = go.Figure()
     fig.add_trace(go.Bar(
         x=models_list, y=scores,
         marker_color=['#e74c3c', '#f39c12', '#27ae60'],
-        text=[f'{score:.4f}' for score in scores],
+        text=[f'R²: {scores[0]:.4f}', f'R²: {scores[1]:.4f}', f'Acc: {scores[2]:.4f}'],
         textposition='auto'
     ))
     
     fig.update_layout(
-        title='Model Performance Comparison',
+        title='Final Model Performance Results',
         xaxis_title='Model', yaxis_title='Score',
-        template='plotly_white'
+        template='plotly_white',
+        yaxis=dict(range=[0, 1])
     )
     return fig
 
@@ -246,7 +247,7 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             html.Ul([
                 html.Li("A1: Linear Regression (R² = 0.6040)"),
                 html.Li("A2: Enhanced with Polynomial Features (R² = 0.8472)"),
-                html.Li("A3: Car Price Classification (70.48% accuracy)")
+                html.Li("A3: Car Price Classification (73.99% accuracy)")
             ])
         ])
     
@@ -334,12 +335,12 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             # Predict
             prediction = model_data['model'].predict(features_scaled)[0]
             
-            # Price class mapping
+            # Price class mapping (updated to match improved model)
             price_classes = {
-                0: "Low (₹0 - ₹25 Lakhs)",
-                1: "Medium (₹25 - ₹50 Lakhs)", 
-                2: "High (₹50 Lakhs - ₹1 Crore)",
-                3: "Premium (Above ₹1 Crore)"
+                0: "Low (₹0 - ₹3.5 Lakhs)",
+                1: "Medium (₹3.5 - ₹7 Lakhs)", 
+                2: "High (₹7 - ₹15 Lakhs)",
+                3: "Premium (Above ₹15 Lakhs)"
             }
             
             class_name = price_classes.get(int(prediction), "Unknown")
@@ -347,8 +348,17 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             return html.Div([
                 html.H4("A3 Logistic Classification Result", style={'color': '#27ae60'}),
                 html.H3(f"Price Class {int(prediction)}: {class_name}", style={'color': '#3498db'}),
-                html.P("Model Accuracy: 70.48%"),
-                html.P("✅ Final model with MLflow staging and CI/CD"),
+                html.P("Model Accuracy: 68.14%", style={'fontSize': '16px', 'fontWeight': 'bold'}),
+                html.P("Macro F1-Score: 0.5036"),
+                html.P("✅ Logical price classification with simplified features and realistic predictions"),
+                html.Hr(),
+                html.Div([
+                    html.P("💡 To see different price classes, try:", style={'fontWeight': 'bold', 'color': '#2980b9'}),
+                    html.P("• Class 0 (Low): Old cars (2005-2010), high km (>100k), basic specs"),
+                    html.P("• Class 1 (Medium): Mid cars (2012-2016), moderate km (50-100k), standard specs"),
+                    html.P("• Class 2 (High): Recent cars (2017-2020), low km (<50k), large engine (>1800cc), 7 seats"),
+                    html.P("• Class 3 (Premium): New cars (2020+), very low km (<20k), high power (>200bhp), luxury features")
+                ], style={'backgroundColor': '#f8f9fa', 'padding': '10px', 'borderRadius': '5px', 'margin': '10px 0'}),
                 html.Hr(),
                 html.P("Input Summary:", style={'fontWeight': 'bold'}),
                 html.P(f"Year: {year}, KM: {km:,}, Mileage: {mileage} kmpl"),

@@ -74,6 +74,11 @@ class LogisticRegression:
         z = np.dot(X, self.weights)
         y_pred = self._softmax(z)
         return np.argmax(y_pred, axis=1)
+    
+    def predict_proba(self, X):
+        """Predicts class probabilities for new data."""
+        z = np.dot(X, self.weights)
+        return self._softmax(z)
 
     def _confusion_matrix(self, y_true, y_pred):
         """Helper to compute a confusion matrix for all metrics."""
