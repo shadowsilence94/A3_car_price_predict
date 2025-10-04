@@ -169,6 +169,18 @@ def render_content(active_tab):
                                           {'label': 'Fourth & Above Owner', 'value': 'Fourth & Above Owner'}],
                                    value='First Owner'),
                         
+                        html.Label("Mileage (kmpl):"),
+                        dcc.Input(id='mileage-input', type='number', value=20, style=input_style),
+                        
+                        html.Label("Engine (CC):"),
+                        dcc.Input(id='engine-input', type='number', value=1200, style=input_style),
+                        
+                        html.Label("Max Power (bhp):"),
+                        dcc.Input(id='power-input', type='number', value=80, style=input_style),
+                        
+                        html.Label("Seats:"),
+                        dcc.Input(id='seats-input', type='number', value=5, style=input_style),
+                        
                         html.Button('Predict Price', id='predict-button', n_clicks=0, style=button_style)
                         
                     ], style={'width': '48%', 'display': 'inline-block'}),
@@ -222,9 +234,11 @@ def create_comparison_chart():
     [Input('model-dropdown', 'value'), Input('year-input', 'value'),
      Input('km-input', 'value'), Input('fuel-dropdown', 'value'),
      Input('seller-dropdown', 'value'), Input('transmission-dropdown', 'value'),
-     Input('owner-dropdown', 'value')]
+     Input('owner-dropdown', 'value'), Input('mileage-input', 'value'),
+     Input('engine-input', 'value'), Input('power-input', 'value'),
+     Input('seats-input', 'value')]
 )
-def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, owner):
+def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, owner, mileage, engine, power, seats):
     if n_clicks == 0:
         return html.Div([
             html.P("Select model and enter car details, then click 'Predict Price'"),
@@ -246,8 +260,8 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             transmission_encoded = model_data['label_encoders']['transmission'].transform([transmission])[0]
             owner_encoded = model_data['label_encoders']['owner'].transform([owner])[0]
             
-            # Create feature array
-            features = np.array([[year, km, fuel_encoded, seller_encoded, transmission_encoded, owner_encoded]])
+            # Create feature array (10 features: 6 numeric + 4 categorical)
+            features = np.array([[year, km, mileage, engine, power, seats, fuel_encoded, seller_encoded, transmission_encoded, owner_encoded]])
             
             # Scale features
             features_scaled = model_data['scaler'].transform(features)
@@ -263,7 +277,8 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
                 html.P("✅ Basic linear regression with proper pipeline"),
                 html.Hr(),
                 html.P("Input Summary:", style={'fontWeight': 'bold'}),
-                html.P(f"Year: {year}, KM: {km:,}"),
+                html.P(f"Year: {year}, KM: {km:,}, Mileage: {mileage} kmpl"),
+                html.P(f"Engine: {engine} CC, Power: {power} bhp, Seats: {seats}"),
                 html.P(f"Fuel: {fuel}, Seller: {seller}"),
                 html.P(f"Transmission: {transmission}, Owner: {owner}")
             ])
@@ -277,8 +292,8 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             transmission_encoded = model_data['label_encoders']['transmission'].transform([transmission])[0]
             owner_encoded = model_data['label_encoders']['owner'].transform([owner])[0]
             
-            # Create feature array
-            features = np.array([[year, km, fuel_encoded, seller_encoded, transmission_encoded, owner_encoded]])
+            # Create feature array (10 features: 6 numeric + 4 categorical)
+            features = np.array([[year, km, mileage, engine, power, seats, fuel_encoded, seller_encoded, transmission_encoded, owner_encoded]])
             
             # Scale and create polynomial features
             features_scaled = model_data['scaler'].transform(features)
@@ -295,7 +310,8 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
                 html.P("✅ Enhanced with polynomial features and Lasso regularization"),
                 html.Hr(),
                 html.P("Input Summary:", style={'fontWeight': 'bold'}),
-                html.P(f"Year: {year}, KM: {km:,}"),
+                html.P(f"Year: {year}, KM: {km:,}, Mileage: {mileage} kmpl"),
+                html.P(f"Engine: {engine} CC, Power: {power} bhp, Seats: {seats}"),
                 html.P(f"Fuel: {fuel}, Seller: {seller}"),
                 html.P(f"Transmission: {transmission}, Owner: {owner}")
             ])
@@ -309,10 +325,8 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             transmission_encoded = model_data['label_encoders']['transmission'].transform([transmission])[0]
             owner_encoded = model_data['label_encoders']['owner'].transform([owner])[0]
             
-            # Create feature array (matching training order)
-            features = np.array([[
-                year, km, fuel_encoded, seller_encoded, transmission_encoded, owner_encoded
-            ]])
+            # Create feature array (10 features: 6 numeric + 4 categorical)
+            features = np.array([[year, km, mileage, engine, power, seats, fuel_encoded, seller_encoded, transmission_encoded, owner_encoded]])
             
             # Scale features
             features_scaled = model_data['scaler'].transform(features)
@@ -337,7 +351,8 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
                 html.P("✅ Final model with MLflow staging and CI/CD"),
                 html.Hr(),
                 html.P("Input Summary:", style={'fontWeight': 'bold'}),
-                html.P(f"Year: {year}, KM: {km:,}"),
+                html.P(f"Year: {year}, KM: {km:,}, Mileage: {mileage} kmpl"),
+                html.P(f"Engine: {engine} CC, Power: {power} bhp, Seats: {seats}"),
                 html.P(f"Fuel: {fuel}, Seller: {seller}"),
                 html.P(f"Transmission: {transmission}, Owner: {owner}")
             ])
