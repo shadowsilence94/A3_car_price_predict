@@ -197,7 +197,7 @@ def render_content(active_tab):
 
 def create_comparison_chart():
     models_list = ['A1 Linear', 'A2 Enhanced', 'A3 Classification']
-    scores = [0.9425, 0.8336, 0.7128]  # Updated scores
+    scores = [0.9425, 0.8336, 0.797]  # Updated scores
     
     fig = go.Figure()
     fig.add_trace(go.Bar(
