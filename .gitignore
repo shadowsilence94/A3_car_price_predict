@@ -59,7 +59,7 @@ mlruns/
 Screenshot*.png
 
 # Model artifacts (keep only final ones)
-*_model_artifacts.pkl
+# *_model_artifacts.pkl
 
 # Temporary scripts
 create_model_first.py
