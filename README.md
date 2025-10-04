@@ -143,15 +143,15 @@ All metrics implemented from scratch:
 ### Assignment Progression
 | Assignment | Model Type | Problem Type | Best Score | Key Features |
 |------------|------------|--------------|------------|--------------|
-| **A1** | Linear Regression | Regression | R² = 0.4842 | Basic implementation + proper pipeline |
-| **A2** | Enhanced Linear Regression | Regression | R² = 0.8336 | Polynomial features + Lasso + proper pipeline |
-| **A3** | Logistic Classification | Classification | Accuracy = 79.27% | Custom metrics + Ridge penalty + MLflow + CI/CD + proper pipeline |
+| **A1** | Linear Regression | Regression | R² = 0.6040 | Basic implementation + proper pipeline |
+| **A2** | Enhanced Linear Regression | Regression | R² = 0.8472 | Polynomial features + Lasso + proper pipeline |
+| **A3** | Logistic Classification | Classification | Accuracy = 70.48% | Custom metrics + Ridge penalty + MLflow + CI/CD + proper pipeline |
 
 ### A3 Best Model Configuration
 - **Penalty**: None (no regularization needed)
 - **Initialization**: Zeros
 - **Learning Rate**: 0.01
-- **Accuracy**: 79.27%
+- **Accuracy**: 70.48%
 - **Macro F1**: Improved performance
 
 ### Key Findings

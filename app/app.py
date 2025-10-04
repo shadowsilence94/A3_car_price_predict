@@ -51,7 +51,7 @@ model_comparison = pd.DataFrame({
     'Assignment': ['A1', 'A2', 'A3'],
     'Model Type': ['Linear Regression', 'Enhanced Linear Regression', 'Logistic Classification'],
     'Problem Type': ['Regression', 'Regression', 'Classification'],
-    'Best Score': ['R² = 0.4842', 'R² = 0.8336', 'Accuracy = 79.27%'],
+    'Best Score': ['R² = 0.6040', 'R² = 0.8472', 'Accuracy = 70.48%'],
     'Key Features': ['Basic implementation + proper pipeline', 'Polynomial features + Lasso + proper pipeline', 'Custom metrics + MLflow + CI/CD + proper pipeline']
 })
 
@@ -129,9 +129,9 @@ def render_content(active_tab):
                         dcc.Dropdown(
                             id='model-dropdown',
                             options=[
-                                {'label': 'A1 - Linear Regression (R² = 0.4842)', 'value': 'A1'},
-                                {'label': 'A2 - Enhanced Linear Regression (R² = 0.8336)', 'value': 'A2'},
-                                {'label': 'A3 - Logistic Classification (79.27% accuracy)', 'value': 'A3'}
+                                {'label': 'A1 - Linear Regression (R² = 0.6040)', 'value': 'A1'},
+                                {'label': 'A2 - Enhanced Linear Regression (R² = 0.8472)', 'value': 'A2'},
+                                {'label': 'A3 - Logistic Classification (70.48% accuracy)', 'value': 'A3'}
                             ],
                             value='A3'
                         ),
@@ -244,9 +244,9 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             html.P("Select model and enter car details, then click 'Predict Price'"),
             html.P("Available models:"),
             html.Ul([
-                html.Li("A1: Linear Regression (R² = 0.4842)"),
-                html.Li("A2: Enhanced with Polynomial Features (R² = 0.8336)"),
-                html.Li("A3: Car Price Classification (79.27% accuracy)")
+                html.Li("A1: Linear Regression (R² = 0.6040)"),
+                html.Li("A2: Enhanced with Polynomial Features (R² = 0.8472)"),
+                html.Li("A3: Car Price Classification (70.48% accuracy)")
             ])
         ])
     
@@ -347,7 +347,7 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             return html.Div([
                 html.H4("A3 Logistic Classification Result", style={'color': '#27ae60'}),
                 html.H3(f"Price Class {int(prediction)}: {class_name}", style={'color': '#3498db'}),
-                html.P("Model Accuracy: 79.27%"),
+                html.P("Model Accuracy: 70.48%"),
                 html.P("✅ Final model with MLflow staging and CI/CD"),
                 html.Hr(),
                 html.P("Input Summary:", style={'fontWeight': 'bold'}),
