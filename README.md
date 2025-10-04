@@ -253,3 +253,6 @@ For questions about this implementation:
 **Assignment**: A3 - Car Price Classification  
 
 This project demonstrates the complete machine learning pipeline from data preprocessing and model training to deployment and monitoring, following best practices for reproducible ML workflows.
+
+---
+*Last updated: October 5, 2025*
