@@ -15,29 +15,17 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)
 sys.path.append(parent_dir)
 
-# Load all model artifacts
+# Load final model artifacts
 models = {}
 try:
-    # A1 Model
-    with open(os.path.join(parent_dir, 'a1_model_artifacts.pkl'), 'rb') as f:
-        a1_data = pickle.load(f)
-        models['A1'] = a1_data
-        print(f"✅ A1 Model loaded: R² = {a1_data['metrics']['r2']:.4f}")
-    
-    # A2 Model
-    with open(os.path.join(parent_dir, 'a2_model_artifacts.pkl'), 'rb') as f:
-        a2_data = pickle.load(f)
-        models['A2'] = a2_data
-        print(f"✅ A2 Model loaded: R² = {a2_data['test_r2']:.4f}")
-    
-    # A3 Model
-    with open(os.path.join(parent_dir, 'a3_model_artifacts.pkl'), 'rb') as f:
+    # A3 Final Model
+    with open(os.path.join(parent_dir, 'model_artifacts.pkl'), 'rb') as f:
         a3_data = pickle.load(f)
         models['A3'] = a3_data
-        print(f"✅ A3 Model loaded: Classification model")
+        print(f"✅ A3 Final Model loaded: Classification model")
         
 except Exception as e:
-    print(f"Error loading models: {e}")
+    print(f"Error loading model: {e}")
 
 # Load dataset
 try:
@@ -46,13 +34,13 @@ try:
 except:
     data = pd.DataFrame()
 
-# Model comparison data from README
+# Model comparison data (updated with final results)
 model_comparison = pd.DataFrame({
     'Assignment': ['A1', 'A2', 'A3'],
     'Model Type': ['Linear Regression', 'Enhanced Linear Regression', 'Logistic Classification'],
     'Problem Type': ['Regression', 'Regression', 'Classification'],
-    'Best Score': ['R² = 0.9425', 'R² = 0.8336', 'Accuracy = 71.28%'],
-    'Key Features': ['Basic implementation', 'Polynomial features + Lasso', 'Custom metrics + MLflow + Deployment']
+    'Best Score': ['R² = 0.6865', 'R² = 0.9091', 'Accuracy = 79.27%'],
+    'Key Features': ['Basic implementation', 'Polynomial features + Lasso', 'Custom metrics + MLflow + CI/CD + Staging']
 })
 
 # Initialize app

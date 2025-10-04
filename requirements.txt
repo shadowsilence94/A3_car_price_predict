@@ -9,3 +9,4 @@ mlflow
 pytest
 dash-bootstrap-components
 flake8
+seaborn

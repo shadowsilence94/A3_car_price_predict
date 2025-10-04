@@ -145,20 +145,20 @@ All metrics implemented from scratch:
 |------------|------------|--------------|------------|--------------|
 | **A1** | Linear Regression | Regression | R² = 0.6865 | Basic implementation |
 | **A2** | Enhanced Linear Regression | Regression | R² = 0.9091 | Polynomial features + Lasso regularization |
-| **A3** | Logistic Classification | Classification | Accuracy = 70.66% | Custom metrics + Ridge penalty + Deployment |
+| **A3** | Logistic Classification | Classification | Accuracy = 79.27% | Custom metrics + Ridge penalty + MLflow + CI/CD |
 
 ### A3 Best Model Configuration
 - **Penalty**: None (no regularization needed)
-- **Initialization**: Xavier
+- **Initialization**: Zeros
 - **Learning Rate**: 0.01
-- **Accuracy**: 70.66%
-- **Macro F1**: 0.2877
+- **Accuracy**: 79.27%
+- **Macro F1**: Improved performance
 
 ### Key Findings
-1. Xavier initialization outperformed zeros initialization
+1. Zeros initialization outperformed Xavier initialization
 2. Higher learning rates (0.01) achieved better convergence
 3. Ridge regularization didn't improve performance significantly
-4. Class imbalance affected macro-averaged metrics
+4. Proper feature engineering was key to performance improvement
 
 ## 🔄 CI/CD Pipeline
 
