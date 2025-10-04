@@ -51,7 +51,7 @@ model_comparison = pd.DataFrame({
     'Assignment': ['A1', 'A2', 'A3'],
     'Model Type': ['Linear Regression', 'Enhanced Linear Regression', 'Logistic Classification'],
     'Problem Type': ['Regression', 'Regression', 'Classification'],
-    'Best Score': ['R² = 0.4842', 'R² = 0.6378', 'Accuracy = 79.27%'],
+    'Best Score': ['R² = 0.4842', 'R² = 0.8336', 'Accuracy = 79.27%'],
     'Key Features': ['Basic implementation + proper pipeline', 'Polynomial features + Lasso + proper pipeline', 'Custom metrics + MLflow + CI/CD + proper pipeline']
 })
 
@@ -130,7 +130,7 @@ def render_content(active_tab):
                             id='model-dropdown',
                             options=[
                                 {'label': 'A1 - Linear Regression (R² = 0.4842)', 'value': 'A1'},
-                                {'label': 'A2 - Enhanced Linear Regression (R² = 0.6378)', 'value': 'A2'},
+                                {'label': 'A2 - Enhanced Linear Regression (R² = 0.8336)', 'value': 'A2'},
                                 {'label': 'A3 - Logistic Classification (79.27% accuracy)', 'value': 'A3'}
                             ],
                             value='A3'
@@ -231,7 +231,7 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             html.P("Available models:"),
             html.Ul([
                 html.Li("A1: Linear Regression (R² = 0.4842)"),
-                html.Li("A2: Enhanced with Polynomial Features (R² = 0.6378)"),
+                html.Li("A2: Enhanced with Polynomial Features (R² = 0.8336)"),
                 html.Li("A3: Car Price Classification (79.27% accuracy)")
             ])
         ])
