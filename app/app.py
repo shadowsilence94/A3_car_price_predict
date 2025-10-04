@@ -117,11 +117,9 @@ def render_content(active_tab):
                         dcc.Dropdown(
                             id='model-dropdown',
                             options=[
-                                {'label': 'A1 - Linear Regression', 'value': 'A1'},
-                                {'label': 'A2 - Enhanced Linear Regression', 'value': 'A2'},
-                                {'label': 'A3 - Logistic Classification', 'value': 'A3'}
+                                {'label': 'A3 - Logistic Classification (79.27% accuracy)', 'value': 'A3'}
                             ],
-                            value='A1'
+                            value='A3'
                         ),
                         
                         html.Label("Year:"),
@@ -152,20 +150,10 @@ def render_content(active_tab):
                         html.Label("Owner:"),
                         dcc.Dropdown(id='owner-dropdown',
                                    options=[{'label': 'First Owner', 'value': 'First Owner'},
-                                          {'label': 'Second Owner', 'value': 'Second Owner'}],
+                                          {'label': 'Second Owner', 'value': 'Second Owner'},
+                                          {'label': 'Third Owner', 'value': 'Third Owner'},
+                                          {'label': 'Fourth & Above Owner', 'value': 'Fourth & Above Owner'}],
                                    value='First Owner'),
-                        
-                        html.Label("Mileage:"),
-                        dcc.Input(id='mileage-input', type='number', value=20, style=input_style),
-                        
-                        html.Label("Engine:"),
-                        dcc.Input(id='engine-input', type='number', value=1200, style=input_style),
-                        
-                        html.Label("Max Power:"),
-                        dcc.Input(id='power-input', type='number', value=80, style=input_style),
-                        
-                        html.Label("Seats:"),
-                        dcc.Input(id='seats-input', type='number', value=5, style=input_style),
                         
                         html.Button('Predict Price', id='predict-button', n_clicks=0, style=button_style)
                         
@@ -220,94 +208,45 @@ def create_comparison_chart():
     [Input('model-dropdown', 'value'), Input('year-input', 'value'),
      Input('km-input', 'value'), Input('fuel-dropdown', 'value'),
      Input('seller-dropdown', 'value'), Input('transmission-dropdown', 'value'),
-     Input('owner-dropdown', 'value'), Input('mileage-input', 'value'),
-     Input('engine-input', 'value'), Input('power-input', 'value'),
-     Input('seats-input', 'value')]
+     Input('owner-dropdown', 'value')]
 )
-def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
-                 owner, mileage, engine, power, seats):
+def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, owner):
     if n_clicks == 0:
         return html.Div([
             html.P("Select model and enter car details, then click 'Predict Price'"),
-            html.P("Available models:"),
+            html.P("Available model:"),
             html.Ul([
-                html.Li("A1: Basic Linear Regression"),
-                html.Li("A2: Enhanced with Polynomial Features"),
-                html.Li("A3: 4-Class Price Classification")
+                html.Li("A3: Car Price Classification (79.27% accuracy)")
             ])
         ])
     
     try:
-        if model_choice == 'A1':
-            model_data = models['A1']
-            input_data = pd.DataFrame({
-                'name': ['Test Car'], 'year': [year], 'km_driven': [km], 'fuel': [fuel],
-                'seller_type': [seller], 'transmission': [transmission], 'owner': [owner],
-                'mileage': [f"{mileage} kmpl"], 'engine': [f"{engine} CC"], 
-                'max_power': [f"{power} bhp"], 'torque': ['200Nm@ 2000rpm'], 'seats': [seats]
-            })
-            prediction = model_data['model'].predict(input_data)[0]
-            
-            return html.Div([
-                html.H4("A1 Linear Regression Result", style={'color': '#e74c3c'}),
-                html.H3(f"Predicted Price: {prediction:,.0f}", style={'color': '#27ae60'}),
-                html.P(f"Model R² Score: {model_data['metrics']['r2']:.4f}"),
-                html.P("✅ Prediction from A1 basic linear regression model")
-            ])
-            
-        elif model_choice == 'A2':
-            model_data = models['A2']
-            
-            # Manual encoding for A2 (match training order)
-            fuel_map = {'Petrol': 0, 'Diesel': 1, 'CNG': 2}
-            seller_map = {'Individual': 0, 'Dealer': 1}
-            transmission_map = {'Manual': 0, 'Automatic': 1}
-            owner_map = {'First Owner': 0, 'Second Owner': 1, 'Third Owner': 2, 'Fourth & Above Owner': 3}
-            
-            features = np.array([[
-                year, km, mileage, engine, power, seats,
-                fuel_map.get(fuel, 0), seller_map.get(seller, 0),
-                transmission_map.get(transmission, 0), owner_map.get(owner, 0)
-            ]])
-            
-            features_scaled = model_data['scaler'].transform(features)
-            features_poly = model_data['poly'].transform(features_scaled)
-            raw_prediction = model_data['model'].predict(features_poly)[0]
-            
-            # Clip unrealistic predictions to reasonable range
-            prediction = max(30000, min(10000000, abs(raw_prediction)))
-            
-            return html.Div([
-                html.H4("A2 Enhanced Linear Regression Result", style={'color': '#f39c12'}),
-                html.H3(f"Predicted Price: {prediction:,.0f}", style={'color': '#27ae60'}),
-                html.P(f"Model R² Score: {model_data['test_r2']:.4f}"),
-                html.P("✅ Enhanced with polynomial features and Lasso regularization"),
-                html.P(f"Note: Raw prediction clipped to realistic range", style={'fontSize': '12px', 'color': '#666'})
-            ])
-            
-        elif model_choice == 'A3':
+        if model_choice == 'A3' and 'A3' in models:
             model_data = models['A3']
             
-            # Manual encoding for A3
-            fuel_map = {'Petrol': 0, 'Diesel': 1, 'CNG': 2}
-            seller_map = {'Individual': 0, 'Dealer': 1}
-            transmission_map = {'Manual': 0, 'Automatic': 1}
-            owner_map = {'First Owner': 0, 'Second Owner': 1, 'Third Owner': 2, 'Fourth & Above Owner': 3}
+            # Encode categorical variables using the saved label encoders
+            fuel_encoded = model_data['label_encoders']['fuel'].transform([fuel])[0]
+            seller_encoded = model_data['label_encoders']['seller_type'].transform([seller])[0]
+            transmission_encoded = model_data['label_encoders']['transmission'].transform([transmission])[0]
+            owner_encoded = model_data['label_encoders']['owner'].transform([owner])[0]
             
+            # Create feature array (matching training order)
             features = np.array([[
-                year, km, mileage, engine, power, seats,
-                fuel_map.get(fuel, 0), seller_map.get(seller, 0),
-                transmission_map.get(transmission, 0), owner_map.get(owner, 0)
+                year, km, fuel_encoded, seller_encoded, transmission_encoded, owner_encoded
             ]])
             
+            # Scale features
             features_scaled = model_data['scaler'].transform(features)
+            
+            # Predict
             prediction = model_data['model'].predict(features_scaled)[0]
             
+            # Price class mapping
             price_classes = {
-                0: "Low (0 - 254999)",
-                1: "Medium (254999 - 450000)", 
-                2: "High (450000 - 675000)",
-                3: "Premium (Above 675000)"
+                0: "Low (₹0 - ₹25 Lakhs)",
+                1: "Medium (₹25 - ₹50 Lakhs)", 
+                2: "High (₹50 Lakhs - ₹1 Crore)",
+                3: "Premium (Above ₹1 Crore)"
             }
             
             class_name = price_classes.get(int(prediction), "Unknown")
@@ -315,15 +254,27 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission,
             return html.Div([
                 html.H4("A3 Logistic Classification Result", style={'color': '#27ae60'}),
                 html.H3(f"Price Class {int(prediction)}: {class_name}", style={'color': '#3498db'}),
-                html.P("Model Accuracy: 71.28%"),
-                html.P("✅ 4-class price classification with custom metrics")
+                html.P("Model Accuracy: 79.27%"),
+                html.P("✅ Final model with MLflow staging and CI/CD"),
+                html.Hr(),
+                html.P("Input Summary:", style={'fontWeight': 'bold'}),
+                html.P(f"Year: {year}, KM: {km:,}"),
+                html.P(f"Fuel: {fuel}, Seller: {seller}"),
+                html.P(f"Transmission: {transmission}, Owner: {owner}")
+            ])
+        else:
+            return html.Div([
+                html.H4("Model Not Available", style={'color': '#e74c3c'}),
+                html.P("Only A3 classification model is available."),
+                html.P("Please select A3 from the dropdown.")
             ])
             
     except Exception as e:
         return html.Div([
             html.H4("Prediction Error", style={'color': '#e74c3c'}),
             html.P(f"Error: {str(e)}"),
-            html.P("Please check your inputs and try again.")
+            html.P("Please check your inputs and try again."),
+            html.P("Make sure all fields are filled correctly.")
         ])
 
 @callback(Output('price-dist', 'figure'), Input('tabs', 'value'))
