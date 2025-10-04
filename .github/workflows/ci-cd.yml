@@ -86,6 +86,9 @@ jobs:
         proxy_host: ${{ secrets.JUMP_HOST }}
         proxy_username: ${{ secrets.JUMP_USER }}
         proxy_key: ${{ secrets.SERVER_SSH_KEY }}
+        port: 22
+        proxy_port: 22
+        timeout: 60s
         script: |
           cd ${{ secrets.SERVER_PATH }}
           docker compose down || true
