@@ -15,17 +15,29 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)
 sys.path.append(parent_dir)
 
-# Load final model artifacts
+# Load all model artifacts
 models = {}
 try:
-    # A3 Final Model
+    # A1 Model
+    with open(os.path.join(parent_dir, 'a1_model_artifacts.pkl'), 'rb') as f:
+        a1_data = pickle.load(f)
+        models['A1'] = a1_data
+        print(f"✅ A1 Model loaded: R² = {a1_data['metrics']['test_r2']:.4f}")
+    
+    # A2 Model
+    with open(os.path.join(parent_dir, 'a2_model_artifacts.pkl'), 'rb') as f:
+        a2_data = pickle.load(f)
+        models['A2'] = a2_data
+        print(f"✅ A2 Model loaded: R² = {a2_data['metrics']['test_r2']:.4f}")
+    
+    # A3 Model
     with open(os.path.join(parent_dir, 'model_artifacts.pkl'), 'rb') as f:
         a3_data = pickle.load(f)
         models['A3'] = a3_data
-        print(f"✅ A3 Final Model loaded: Classification model")
+        print(f"✅ A3 Model loaded: Classification model")
         
 except Exception as e:
-    print(f"Error loading model: {e}")
+    print(f"Error loading models: {e}")
 
 # Load dataset
 try:
@@ -39,8 +51,8 @@ model_comparison = pd.DataFrame({
     'Assignment': ['A1', 'A2', 'A3'],
     'Model Type': ['Linear Regression', 'Enhanced Linear Regression', 'Logistic Classification'],
     'Problem Type': ['Regression', 'Regression', 'Classification'],
-    'Best Score': ['R² = 0.6865', 'R² = 0.9091', 'Accuracy = 79.27%'],
-    'Key Features': ['Basic implementation', 'Polynomial features + Lasso', 'Custom metrics + MLflow + CI/CD + Staging']
+    'Best Score': ['R² = 0.4842', 'R² = 0.6378', 'Accuracy = 79.27%'],
+    'Key Features': ['Basic implementation + proper pipeline', 'Polynomial features + Lasso + proper pipeline', 'Custom metrics + MLflow + CI/CD + proper pipeline']
 })
 
 # Initialize app
@@ -117,6 +129,8 @@ def render_content(active_tab):
                         dcc.Dropdown(
                             id='model-dropdown',
                             options=[
+                                {'label': 'A1 - Linear Regression (R² = 0.4842)', 'value': 'A1'},
+                                {'label': 'A2 - Enhanced Linear Regression (R² = 0.6378)', 'value': 'A2'},
                                 {'label': 'A3 - Logistic Classification (79.27% accuracy)', 'value': 'A3'}
                             ],
                             value='A3'
@@ -214,14 +228,79 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
     if n_clicks == 0:
         return html.Div([
             html.P("Select model and enter car details, then click 'Predict Price'"),
-            html.P("Available model:"),
+            html.P("Available models:"),
             html.Ul([
+                html.Li("A1: Linear Regression (R² = 0.4842)"),
+                html.Li("A2: Enhanced with Polynomial Features (R² = 0.6378)"),
                 html.Li("A3: Car Price Classification (79.27% accuracy)")
             ])
         ])
     
     try:
-        if model_choice == 'A3' and 'A3' in models:
+        if model_choice == 'A1' and 'A1' in models:
+            model_data = models['A1']
+            
+            # Encode categorical variables
+            fuel_encoded = model_data['label_encoders']['fuel'].transform([fuel])[0]
+            seller_encoded = model_data['label_encoders']['seller_type'].transform([seller])[0]
+            transmission_encoded = model_data['label_encoders']['transmission'].transform([transmission])[0]
+            owner_encoded = model_data['label_encoders']['owner'].transform([owner])[0]
+            
+            # Create feature array
+            features = np.array([[year, km, fuel_encoded, seller_encoded, transmission_encoded, owner_encoded]])
+            
+            # Scale features
+            features_scaled = model_data['scaler'].transform(features)
+            
+            # Predict
+            prediction = model_data['model'].predict(features_scaled)[0]
+            prediction = max(30000, prediction)  # Ensure positive price
+            
+            return html.Div([
+                html.H4("A1 Linear Regression Result", style={'color': '#e74c3c'}),
+                html.H3(f"Predicted Price: ₹{prediction:,.0f}", style={'color': '#27ae60'}),
+                html.P(f"Model R² Score: {model_data['metrics']['test_r2']:.4f}"),
+                html.P("✅ Basic linear regression with proper pipeline"),
+                html.Hr(),
+                html.P("Input Summary:", style={'fontWeight': 'bold'}),
+                html.P(f"Year: {year}, KM: {km:,}"),
+                html.P(f"Fuel: {fuel}, Seller: {seller}"),
+                html.P(f"Transmission: {transmission}, Owner: {owner}")
+            ])
+            
+        elif model_choice == 'A2' and 'A2' in models:
+            model_data = models['A2']
+            
+            # Encode categorical variables
+            fuel_encoded = model_data['label_encoders']['fuel'].transform([fuel])[0]
+            seller_encoded = model_data['label_encoders']['seller_type'].transform([seller])[0]
+            transmission_encoded = model_data['label_encoders']['transmission'].transform([transmission])[0]
+            owner_encoded = model_data['label_encoders']['owner'].transform([owner])[0]
+            
+            # Create feature array
+            features = np.array([[year, km, fuel_encoded, seller_encoded, transmission_encoded, owner_encoded]])
+            
+            # Scale and create polynomial features
+            features_scaled = model_data['scaler'].transform(features)
+            features_poly = model_data['poly'].transform(features_scaled)
+            
+            # Predict
+            prediction = model_data['model'].predict(features_poly)[0]
+            prediction = max(30000, abs(prediction))  # Ensure positive price
+            
+            return html.Div([
+                html.H4("A2 Enhanced Linear Regression Result", style={'color': '#f39c12'}),
+                html.H3(f"Predicted Price: ₹{prediction:,.0f}", style={'color': '#27ae60'}),
+                html.P(f"Model R² Score: {model_data['metrics']['test_r2']:.4f}"),
+                html.P("✅ Enhanced with polynomial features and Lasso regularization"),
+                html.Hr(),
+                html.P("Input Summary:", style={'fontWeight': 'bold'}),
+                html.P(f"Year: {year}, KM: {km:,}"),
+                html.P(f"Fuel: {fuel}, Seller: {seller}"),
+                html.P(f"Transmission: {transmission}, Owner: {owner}")
+            ])
+            
+        elif model_choice == 'A3' and 'A3' in models:
             model_data = models['A3']
             
             # Encode categorical variables using the saved label encoders
@@ -265,8 +344,8 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
         else:
             return html.Div([
                 html.H4("Model Not Available", style={'color': '#e74c3c'}),
-                html.P("Only A3 classification model is available."),
-                html.P("Please select A3 from the dropdown.")
+                html.P(f"Model {model_choice} is not loaded."),
+                html.P("Available models: " + ", ".join(models.keys()))
             ])
             
     except Exception as e:
