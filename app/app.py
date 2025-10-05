@@ -47,13 +47,13 @@ try:
 except:
     data = pd.DataFrame()
 
-# Model comparison data (aligned with current results)
+# Model comparison data (aligned with actual results)
 model_comparison = pd.DataFrame({
     'Assignment': ['A1', 'A2', 'A3'],
     'Model Type': ['Linear Regression', 'Enhanced Linear Regression', 'Logistic Classification'],
     'Problem Type': ['Regression', 'Regression', 'Classification'],
-    'Best Score': ['R² = 0.6040', 'R² = 0.9101', 'Accuracy = 73.99%'],
-    'Key Features': ['Basic implementation + proper pipeline', 'Polynomial features + Lasso regularization', 'Logical price boundaries + simplified features']
+    'Best Score': ['R² = 0.6864', 'R² = 0.9101', 'Accuracy = 70.48%'],
+    'Key Features': ['Basic implementation + proper pipeline', 'Polynomial features + Lasso regularization', 'Custom logistic regression + Ridge penalty']
 })
 
 # Initialize app with external CSS
@@ -201,7 +201,7 @@ def render_content(active_tab):
                 ], className='metric-card mobile-full', style={'width': '30%', 'display': 'inline-block'}),
                 
                 html.Div([
-                    html.H3("73.99%", style={'fontSize': '36px', 'margin': '0'}),
+                    html.H3("70.48%", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("Classification Accuracy", style={'margin': '5px 0'})
                 ], className='metric-card mobile-full', style={'width': '30%', 'display': 'inline-block'})
             ], style={'textAlign': 'center', 'marginBottom': '30px'}),
@@ -245,9 +245,9 @@ def render_content(active_tab):
                         dcc.Dropdown(
                             id='model-dropdown',
                             options=[
-                                {'label': '🔴 A1 - Linear Regression (R² = 60.40%)', 'value': 'A1'},
+                                {'label': '🔴 A1 - Linear Regression (R² = 68.64%)', 'value': 'A1'},
                                 {'label': '🟡 A2 - Enhanced Regression (R² = 91.01%)', 'value': 'A2'},
-                                {'label': '🟢 A3 - Smart Classification (Acc = 73.99%)', 'value': 'A3'}
+                                {'label': '🟢 A3 - Smart Classification (Acc = 70.48%)', 'value': 'A3'}
                             ],
                             value='A3',
                             style={'marginBottom': '15px'}
@@ -408,7 +408,7 @@ def render_content(active_tab):
 
 def create_comparison_chart():
     models_list = ['A1 Linear', 'A2 Enhanced', 'A3 Classification']
-    scores = [0.6040, 0.9101, 0.7399]  # Correct A3 score from notebook
+    scores = [0.6864, 0.9101, 0.7048]  # Correct scores from actual model artifacts
     
     fig = go.Figure()
     fig.add_trace(go.Bar(
@@ -444,7 +444,7 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             html.Ul([
                 html.Li("A1: Linear Regression (R² = 0.6040)"),
                 html.Li("A2: Enhanced with Polynomial Features (R² = 0.8472)"),
-                html.Li("A3: Car Price Classification (73.99% accuracy)")
+                html.Li("A3: Car Price Classification (70.48% accuracy)")
             ])
         ])
     
@@ -545,9 +545,9 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             return html.Div([
                 html.H4("A3 Logistic Classification Result", style={'color': '#27ae60'}),
                 html.H3(f"Price Class {int(prediction)}: {class_name}", style={'color': '#3498db'}),
-                html.P("Model Accuracy: 68.14%", style={'fontSize': '16px', 'fontWeight': 'bold'}),
-                html.P("Macro F1-Score: 0.5036"),
-                html.P("✅ Logical price classification with simplified features and realistic predictions"),
+                html.P("Model Accuracy: 70.48%", style={'fontSize': '16px', 'fontWeight': 'bold'}),
+                html.P("Macro F1-Score: 0.6842"),
+                html.P("✅ Custom logistic regression with Ridge regularization"),
                 html.Hr(),
                 html.Div([
                     html.P("💡 To see different price classes, try:", style={'fontWeight': 'bold', 'color': '#2980b9'}),
