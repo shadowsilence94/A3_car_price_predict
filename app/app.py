@@ -188,22 +188,28 @@ app.layout = html.Div([
 def render_content(active_tab):
     if active_tab == 'comparison':
         return html.Div([
-            # Key Metrics Cards
+            # Key Metrics Cards - Better alignment
             html.Div([
                 html.Div([
                     html.H3("3", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("ML Models", style={'margin': '5px 0'})
-                ], className='metric-card mobile-full', style={'width': '30%', 'display': 'inline-block'}),
+                ], className='metric-card mobile-full', style={
+                    'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%'
+                }),
                 
                 html.Div([
                     html.H3("91.01%", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("Best R² Score", style={'margin': '5px 0'})
-                ], className='metric-card mobile-full', style={'width': '30%', 'display': 'inline-block'}),
+                ], className='metric-card mobile-full', style={
+                    'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%'
+                }),
                 
                 html.Div([
                     html.H3("70.48%", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("Classification Accuracy", style={'margin': '5px 0'})
-                ], className='metric-card mobile-full', style={'width': '30%', 'display': 'inline-block'})
+                ], className='metric-card mobile-full', style={
+                    'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%'
+                })
             ], style={'textAlign': 'center', 'marginBottom': '30px'}),
             
             html.Div([
@@ -237,9 +243,9 @@ def render_content(active_tab):
                 html.H2("🔮 Intelligent Car Price Prediction", style={'color': colors['dark'], 'marginBottom': '20px'}),
                 
                 html.Div([
-                    # Input form - responsive
+                    # Input form - responsive with better alignment
                     html.Div([
-                        html.H4("🚗 Vehicle Configuration", style={'color': colors['primary']}),
+                        html.H4("🚗 Vehicle Configuration", style={'color': colors['primary'], 'textAlign': 'center'}),
                         
                         html.Label("🤖 Select ML Model:", style={'fontWeight': 'bold', 'marginBottom': '5px'}),
                         dcc.Dropdown(
@@ -333,19 +339,24 @@ def render_content(active_tab):
                         html.Button('🎯 Predict Price', id='predict-button', n_clicks=0, 
                                    style=button_style, className='mobile-full')
                         
-                    ], className='mobile-full', style={'width': '48%', 'display': 'inline-block', 'verticalAlign': 'top'}),
+                    ], className='mobile-full', style={
+                        'width': '48%', 'display': 'inline-block', 'verticalAlign': 'top',
+                        'paddingRight': '2%'
+                    }),
                     
-                    # Results - responsive
+                    # Results - responsive with better alignment
                     html.Div([
-                        html.H4("📊 Prediction Results", style={'color': colors['primary']}),
+                        html.H4("📊 Prediction Results", style={'color': colors['primary'], 'textAlign': 'center'}),
                         html.Div(id='prediction-output', style={
                             'padding': '20px', 'backgroundColor': '#f8f9fa',
                             'borderRadius': '12px', 'minHeight': '300px',
                             'border': '2px dashed #dee2e6'
                         })
-                    ], className='mobile-full', style={'width': '48%', 'float': 'right'})
+                    ], className='mobile-full', style={
+                        'width': '48%', 'float': 'right', 'verticalAlign': 'top'
+                    })
                     
-                ], style={'overflow': 'hidden'})
+                ], style={'overflow': 'hidden', 'textAlign': 'left'})
             ], style=card_style)
         ])
     
@@ -359,26 +370,38 @@ def render_content(active_tab):
                 html.Div(id='dataset-stats')
             ], style=card_style),
             
-            # Charts Grid
+            # Charts Grid - Fixed alignment
             html.Div([
                 html.Div([
                     dcc.Graph(id='price-dist', className='chart-container')
-                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'}),
+                ], className='mobile-full', style={
+                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
+                    'verticalAlign': 'top', 'marginRight': '2%'
+                }),
                 
                 html.Div([
                     dcc.Graph(id='year-trend', className='chart-container')
-                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'})
-            ], style={'marginBottom': '20px'}),
+                ], className='mobile-full', style={
+                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
+                    'verticalAlign': 'top'
+                })
+            ], style={'marginBottom': '20px', 'textAlign': 'center'}),
             
             html.Div([
                 html.Div([
                     dcc.Graph(id='fuel-analysis', className='chart-container')
-                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'}),
+                ], className='mobile-full', style={
+                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
+                    'verticalAlign': 'top', 'marginRight': '2%'
+                }),
                 
                 html.Div([
                     dcc.Graph(id='correlation-heatmap', className='chart-container')
-                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'})
-            ])
+                ], className='mobile-full', style={
+                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
+                    'verticalAlign': 'top'
+                })
+            ], style={'textAlign': 'center'})
         ])
     
     elif active_tab == 'insights':
@@ -388,22 +411,34 @@ def render_content(active_tab):
             html.Div([
                 html.Div([
                     dcc.Graph(id='brand-analysis', className='chart-container')
-                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'}),
+                ], className='mobile-full', style={
+                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
+                    'verticalAlign': 'top', 'marginRight': '2%'
+                }),
                 
                 html.Div([
                     dcc.Graph(id='owner-impact', className='chart-container')
-                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'})
-            ], style={'marginBottom': '20px'}),
+                ], className='mobile-full', style={
+                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
+                    'verticalAlign': 'top'
+                })
+            ], style={'marginBottom': '20px', 'textAlign': 'center'}),
             
             html.Div([
                 html.Div([
                     dcc.Graph(id='mileage-price', className='chart-container')
-                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'}),
+                ], className='mobile-full', style={
+                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
+                    'verticalAlign': 'top', 'marginRight': '2%'
+                }),
                 
                 html.Div([
                     dcc.Graph(id='age-depreciation', className='chart-container')
-                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'})
-            ])
+                ], className='mobile-full', style={
+                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
+                    'verticalAlign': 'top'
+                })
+            ], style={'textAlign': 'center'})
         ])
 
 def create_comparison_chart():
