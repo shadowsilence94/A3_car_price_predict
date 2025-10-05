@@ -5,6 +5,7 @@ import numpy as np
 import pickle
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import sys
 import os
 import warnings
@@ -31,7 +32,7 @@ try:
         print(f"✅ A2 Model loaded: R² = {a2_data['metrics']['test_r2']:.4f}")
     
     # A3 Model
-    with open(os.path.join(parent_dir, 'model_artifacts.pkl'), 'rb') as f:
+    with open(os.path.join(parent_dir, 'a3_model_artifacts.pkl'), 'rb') as f:
         a3_data = pickle.load(f)
         models['A3'] = a3_data
         print(f"✅ A3 Model loaded: Classification model")
@@ -55,144 +56,294 @@ model_comparison = pd.DataFrame({
     'Key Features': ['Basic implementation + proper pipeline', 'Polynomial features + Lasso regularization', 'Logical price boundaries + simplified features']
 })
 
-# Initialize app
-app = dash.Dash(__name__, suppress_callback_exceptions=True)
-app.title = "Car Price Analysis - st126010"
+# Initialize app with external CSS
+external_stylesheets = [
+    'https://codepen.io/chriddyp/pen/bWLwgP.css',
+    {
+        'href': 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
+        'rel': 'stylesheet'
+    }
+]
 
-# Styles
+app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=external_stylesheets)
+app.title = "Car Price Analytics - st126010"
+
+# Add responsive meta tag
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        {%metas%}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+        <style>
+            @media (max-width: 768px) {
+                .mobile-full { width: 100% !important; display: block !important; margin-bottom: 20px !important; }
+                .mobile-stack { flex-direction: column !important; }
+                .mobile-text { font-size: 14px !important; }
+                .mobile-padding { padding: 10px !important; }
+            }
+            .chart-container { height: 400px; }
+            @media (max-width: 768px) {
+                .chart-container { height: 300px; }
+            }
+            .metric-card {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 20px;
+                border-radius: 12px;
+                text-align: center;
+                margin: 10px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+            .tab-content { animation: fadeIn 0.5s; }
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            body { font-family: 'Inter', sans-serif !important; }
+        </style>
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+'''
+
+# Responsive styles
+mobile_style = {
+    '@media (max-width: 768px)': {
+        'width': '100% !important',
+        'display': 'block !important',
+        'marginBottom': '20px'
+    }
+}
+
 card_style = {
-    'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px',
-    'boxShadow': '0 4px 6px rgba(0,0,0,0.1)', 'marginBottom': '20px'
+    'backgroundColor': 'white', 'padding': '15px', 'borderRadius': '12px',
+    'boxShadow': '0 4px 12px rgba(0,0,0,0.1)', 'marginBottom': '20px',
+    'border': '1px solid #e1e8ed'
 }
 
 input_style = {
-    'width': '100%', 'padding': '8px', 'borderRadius': '5px',
-    'border': '1px solid #ddd', 'marginBottom': '10px'
+    'width': '100%', 'padding': '10px', 'borderRadius': '8px',
+    'border': '1px solid #ddd', 'marginBottom': '15px', 'fontSize': '14px'
 }
 
 button_style = {
     'backgroundColor': '#3498db', 'color': 'white', 'padding': '12px 24px',
-    'border': 'none', 'borderRadius': '5px', 'cursor': 'pointer', 'width': '100%'
+    'border': 'none', 'borderRadius': '8px', 'cursor': 'pointer', 'width': '100%',
+    'fontSize': '16px', 'fontWeight': 'bold', 'transition': 'all 0.3s ease'
 }
 
-# Layout
+# Enhanced color palette
+colors = {
+    'primary': '#3498db',
+    'secondary': '#2ecc71', 
+    'accent': '#e74c3c',
+    'warning': '#f39c12',
+    'dark': '#2c3e50',
+    'light': '#ecf0f1'
+}
+
+# Layout with responsive design
 app.layout = html.Div([
-    # Header
+    # Header with responsive design
     html.Div([
-        html.H1("🚗 Car Price Classification - Assignment 3", style={'textAlign': 'center', 'color': 'white'}),
-        html.P("Student ID: st126010 - Htut Ko Ko", style={'textAlign': 'center', 'color': 'white'})
+        html.Div([
+            html.H1("🚗 Car Price Analytics Dashboard", 
+                   style={'margin': '0', 'fontSize': '28px', 'fontWeight': 'bold'}),
+            html.P("Advanced ML Models & Data Insights | st126010 - Htut Ko Ko", 
+                  style={'margin': '5px 0 0 0', 'fontSize': '16px', 'opacity': '0.9'})
+        ], className='mobile-padding')
     ], style={
         'background': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        'padding': '20px', 'marginBottom': '20px'
+        'color': 'white', 'padding': '20px', 'marginBottom': '20px',
+        'borderRadius': '0 0 20px 20px'
     }),
     
-    # Tabs
-    dcc.Tabs(id="tabs", value='comparison', children=[
-        dcc.Tab(label='📊 Model Comparison', value='comparison'),
-        dcc.Tab(label='🔮 Price Prediction', value='prediction'),
-        dcc.Tab(label='📈 Data Analytics', value='analytics')
-    ]),
+    # Enhanced Tabs with icons
+    dcc.Tabs(id="tabs", value='analytics', children=[
+        dcc.Tab(label='📊 Model Comparison', value='comparison', 
+               style={'padding': '12px 20px'}, selected_style={'backgroundColor': colors['primary'], 'color': 'white'}),
+        dcc.Tab(label='🔮 Price Prediction', value='prediction',
+               style={'padding': '12px 20px'}, selected_style={'backgroundColor': colors['primary'], 'color': 'white'}),
+        dcc.Tab(label='📈 Data Analytics', value='analytics',
+               style={'padding': '12px 20px'}, selected_style={'backgroundColor': colors['primary'], 'color': 'white'}),
+        dcc.Tab(label='🎯 Market Insights', value='insights',
+               style={'padding': '12px 20px'}, selected_style={'backgroundColor': colors['primary'], 'color': 'white'})
+    ], style={'marginBottom': '20px'}),
     
-    html.Div(id='tab-content', style={'padding': '20px'})
-], style={'fontFamily': 'Arial, sans-serif', 'backgroundColor': '#f5f5f5'})
+    html.Div(id='tab-content', className='tab-content', style={'padding': '0 20px'})
+], style={
+    'fontFamily': '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif', 
+    'backgroundColor': '#f8f9fa', 'minHeight': '100vh', 'margin': '0', 'padding': '0'
+})
 
 @callback(Output('tab-content', 'children'), Input('tabs', 'value'))
 def render_content(active_tab):
     if active_tab == 'comparison':
         return html.Div([
+            # Key Metrics Cards
             html.Div([
-                html.H2("Assignment Evolution & Results"),
+                html.Div([
+                    html.H3("3", style={'fontSize': '36px', 'margin': '0'}),
+                    html.P("ML Models", style={'margin': '5px 0'})
+                ], className='metric-card mobile-full', style={'width': '30%', 'display': 'inline-block'}),
+                
+                html.Div([
+                    html.H3("91.01%", style={'fontSize': '36px', 'margin': '0'}),
+                    html.P("Best R² Score", style={'margin': '5px 0'})
+                ], className='metric-card mobile-full', style={'width': '30%', 'display': 'inline-block'}),
+                
+                html.Div([
+                    html.H3("73.99%", style={'fontSize': '36px', 'margin': '0'}),
+                    html.P("Classification Accuracy", style={'margin': '5px 0'})
+                ], className='metric-card mobile-full', style={'width': '30%', 'display': 'inline-block'})
+            ], style={'textAlign': 'center', 'marginBottom': '30px'}),
+            
+            html.Div([
+                html.H2("🎯 Assignment Evolution & Results", style={'color': colors['dark'], 'marginBottom': '20px'}),
                 dash_table.DataTable(
                     data=model_comparison.to_dict('records'),
                     columns=[{"name": i, "id": i} for i in model_comparison.columns],
-                    style_cell={'textAlign': 'left', 'padding': '10px'},
-                    style_header={'backgroundColor': '#3498db', 'color': 'white'},
+                    style_cell={
+                        'textAlign': 'left', 'padding': '12px', 'fontSize': '14px',
+                        'fontFamily': 'inherit', 'border': '1px solid #e1e8ed'
+                    },
+                    style_header={
+                        'backgroundColor': colors['primary'], 'color': 'white', 
+                        'fontWeight': 'bold', 'fontSize': '15px'
+                    },
                     style_data_conditional=[{
-                        'if': {'row_index': 2}, 'backgroundColor': '#e8f5e8'
-                    }]
+                        'if': {'row_index': 2}, 
+                        'backgroundColor': '#e8f5e8', 'border': '2px solid #27ae60'
+                    }],
+                    style_table={'overflowX': 'auto'}
                 ),
-                html.Div([dcc.Graph(figure=create_comparison_chart())], style={'marginTop': '20px'})
+                html.Div([
+                    dcc.Graph(figure=create_comparison_chart(), className='chart-container')
+                ], style={'marginTop': '30px'})
             ], style=card_style)
         ])
     
     elif active_tab == 'prediction':
         return html.Div([
             html.Div([
-                html.H2("Car Price Prediction"),
+                html.H2("🔮 Intelligent Car Price Prediction", style={'color': colors['dark'], 'marginBottom': '20px'}),
                 
                 html.Div([
-                    # Input form
+                    # Input form - responsive
                     html.Div([
-                        html.H4("Select Model & Enter Details"),
+                        html.H4("🚗 Vehicle Configuration", style={'color': colors['primary']}),
                         
-                        html.Label("Model:"),
+                        html.Label("🤖 Select ML Model:", style={'fontWeight': 'bold', 'marginBottom': '5px'}),
                         dcc.Dropdown(
                             id='model-dropdown',
                             options=[
-                                {'label': 'A1 - Linear Regression (R² = 0.6040)', 'value': 'A1'},
-                                {'label': 'A2 - Enhanced Linear Regression (R² = 0.9101)', 'value': 'A2'},
-                                {'label': 'A3 - Logistic Classification (73.99% accuracy)', 'value': 'A3'}
+                                {'label': '🔴 A1 - Linear Regression (R² = 60.40%)', 'value': 'A1'},
+                                {'label': '🟡 A2 - Enhanced Regression (R² = 91.01%)', 'value': 'A2'},
+                                {'label': '🟢 A3 - Smart Classification (Acc = 73.99%)', 'value': 'A3'}
                             ],
-                            value='A3'
+                            value='A3',
+                            style={'marginBottom': '15px'}
                         ),
                         
-                        html.Label("Year:"),
-                        dcc.Input(id='year-input', type='number', value=2015, style=input_style),
+                        html.Div([
+                            html.Div([
+                                html.Label("📅 Year:", style={'fontWeight': 'bold'}),
+                                dcc.Input(id='year-input', type='number', value=2015, 
+                                         min=2000, max=2024, style=input_style)
+                            ], className='mobile-full', style={'width': '48%', 'display': 'inline-block', 'marginRight': '4%'}),
+                            
+                            html.Div([
+                                html.Label("🛣️ KM Driven:", style={'fontWeight': 'bold'}),
+                                dcc.Input(id='km-input', type='number', value=50000, 
+                                         min=0, style=input_style)
+                            ], className='mobile-full', style={'width': '48%', 'display': 'inline-block'})
+                        ], className='mobile-stack', style={'display': 'flex', 'marginBottom': '10px'}),
                         
-                        html.Label("KM Driven:"),
-                        dcc.Input(id='km-input', type='number', value=50000, style=input_style),
+                        html.Div([
+                            html.Div([
+                                html.Label("⛽ Fuel Type:", style={'fontWeight': 'bold'}),
+                                dcc.Dropdown(id='fuel-dropdown',
+                                           options=[{'label': '⛽ Petrol', 'value': 'Petrol'},
+                                                  {'label': '🛢️ Diesel', 'value': 'Diesel'},
+                                                  {'label': '🌿 CNG', 'value': 'CNG'}],
+                                           value='Petrol', style={'marginBottom': '15px'})
+                            ], className='mobile-full', style={'width': '48%', 'display': 'inline-block', 'marginRight': '4%'}),
+                            
+                            html.Div([
+                                html.Label("🏪 Seller Type:", style={'fontWeight': 'bold'}),
+                                dcc.Dropdown(id='seller-dropdown',
+                                           options=[{'label': '👤 Individual', 'value': 'Individual'},
+                                                  {'label': '🏢 Dealer', 'value': 'Dealer'}],
+                                           value='Individual', style={'marginBottom': '15px'})
+                            ], className='mobile-full', style={'width': '48%', 'display': 'inline-block'})
+                        ], className='mobile-stack', style={'display': 'flex'}),
                         
-                        html.Label("Fuel:"),
-                        dcc.Dropdown(id='fuel-dropdown',
-                                   options=[{'label': 'Petrol', 'value': 'Petrol'},
-                                          {'label': 'Diesel', 'value': 'Diesel'},
-                                          {'label': 'CNG', 'value': 'CNG'}],
-                                   value='Petrol'),
+                        html.Div([
+                            html.Div([
+                                html.Label("⚙️ Transmission:", style={'fontWeight': 'bold'}),
+                                dcc.Dropdown(id='transmission-dropdown',
+                                           options=[{'label': '🔧 Manual', 'value': 'Manual'},
+                                                  {'label': '🤖 Automatic', 'value': 'Automatic'}],
+                                           value='Manual', style={'marginBottom': '15px'})
+                            ], className='mobile-full', style={'width': '48%', 'display': 'inline-block', 'marginRight': '4%'}),
+                            
+                            html.Div([
+                                html.Label("👥 Owner Type:", style={'fontWeight': 'bold'}),
+                                dcc.Dropdown(id='owner-dropdown',
+                                           options=[{'label': '1️⃣ First Owner', 'value': 'First Owner'},
+                                                  {'label': '2️⃣ Second Owner', 'value': 'Second Owner'},
+                                                  {'label': '3️⃣ Third Owner', 'value': 'Third Owner'},
+                                                  {'label': '4️⃣+ Fourth & Above', 'value': 'Fourth & Above Owner'}],
+                                           value='First Owner', style={'marginBottom': '15px'})
+                            ], className='mobile-full', style={'width': '48%', 'display': 'inline-block'})
+                        ], className='mobile-stack', style={'display': 'flex'}),
                         
-                        html.Label("Seller Type:"),
-                        dcc.Dropdown(id='seller-dropdown',
-                                   options=[{'label': 'Individual', 'value': 'Individual'},
-                                          {'label': 'Dealer', 'value': 'Dealer'}],
-                                   value='Individual'),
+                        html.Div([
+                            html.Div([
+                                html.Label("📊 Mileage (kmpl):", style={'fontWeight': 'bold'}),
+                                dcc.Input(id='mileage-input', type='number', value=20, 
+                                         min=5, max=50, style=input_style)
+                            ], className='mobile-full', style={'width': '32%', 'display': 'inline-block', 'marginRight': '2%'}),
+                            
+                            html.Div([
+                                html.Label("🔧 Engine (CC):", style={'fontWeight': 'bold'}),
+                                dcc.Input(id='engine-input', type='number', value=1200, 
+                                         min=500, max=5000, style=input_style)
+                            ], className='mobile-full', style={'width': '32%', 'display': 'inline-block', 'marginRight': '2%'}),
+                            
+                            html.Div([
+                                html.Label("⚡ Max Power (bhp):", style={'fontWeight': 'bold'}),
+                                dcc.Input(id='power-input', type='number', value=80, 
+                                         min=30, max=500, style=input_style)
+                            ], className='mobile-full', style={'width': '32%', 'display': 'inline-block'})
+                        ], className='mobile-stack', style={'display': 'flex', 'marginBottom': '10px'}),
                         
-                        html.Label("Transmission:"),
-                        dcc.Dropdown(id='transmission-dropdown',
-                                   options=[{'label': 'Manual', 'value': 'Manual'},
-                                          {'label': 'Automatic', 'value': 'Automatic'}],
-                                   value='Manual'),
+                        html.Label("💺 Seats:", style={'fontWeight': 'bold'}),
+                        dcc.Input(id='seats-input', type='number', value=5, 
+                                 min=2, max=8, style=input_style),
                         
-                        html.Label("Owner:"),
-                        dcc.Dropdown(id='owner-dropdown',
-                                   options=[{'label': 'First Owner', 'value': 'First Owner'},
-                                          {'label': 'Second Owner', 'value': 'Second Owner'},
-                                          {'label': 'Third Owner', 'value': 'Third Owner'},
-                                          {'label': 'Fourth & Above Owner', 'value': 'Fourth & Above Owner'}],
-                                   value='First Owner'),
+                        html.Button('🎯 Predict Price', id='predict-button', n_clicks=0, 
+                                   style=button_style, className='mobile-full')
                         
-                        html.Label("Mileage (kmpl):"),
-                        dcc.Input(id='mileage-input', type='number', value=20, style=input_style),
-                        
-                        html.Label("Engine (CC):"),
-                        dcc.Input(id='engine-input', type='number', value=1200, style=input_style),
-                        
-                        html.Label("Max Power (bhp):"),
-                        dcc.Input(id='power-input', type='number', value=80, style=input_style),
-                        
-                        html.Label("Seats:"),
-                        dcc.Input(id='seats-input', type='number', value=5, style=input_style),
-                        
-                        html.Button('Predict Price', id='predict-button', n_clicks=0, style=button_style)
-                        
-                    ], style={'width': '48%', 'display': 'inline-block'}),
+                    ], className='mobile-full', style={'width': '48%', 'display': 'inline-block', 'verticalAlign': 'top'}),
                     
-                    # Results
+                    # Results - responsive
                     html.Div([
-                        html.H4("Prediction Result"),
+                        html.H4("📊 Prediction Results", style={'color': colors['primary']}),
                         html.Div(id='prediction-output', style={
                             'padding': '20px', 'backgroundColor': '#f8f9fa',
-                            'borderRadius': '5px', 'minHeight': '200px'
+                            'borderRadius': '12px', 'minHeight': '300px',
+                            'border': '2px dashed #dee2e6'
                         })
-                    ], style={'width': '48%', 'float': 'right'})
+                    ], className='mobile-full', style={'width': '48%', 'float': 'right'})
                     
                 ], style={'overflow': 'hidden'})
             ], style=card_style)
@@ -200,13 +351,59 @@ def render_content(active_tab):
     
     elif active_tab == 'analytics':
         return html.Div([
+            html.H2("📈 Advanced Data Analytics", style={'color': colors['dark'], 'marginBottom': '30px'}),
+            
+            # Summary Statistics
             html.Div([
-                html.H2("Data Analytics"),
+                html.H3("📊 Dataset Overview", style={'marginBottom': '20px'}),
+                html.Div(id='dataset-stats')
+            ], style=card_style),
+            
+            # Charts Grid
+            html.Div([
                 html.Div([
-                    html.Div([dcc.Graph(id='price-dist')], style={'width': '50%', 'display': 'inline-block'}),
-                    html.Div([dcc.Graph(id='year-trend')], style={'width': '50%', 'display': 'inline-block'})
-                ])
-            ], style=card_style)
+                    dcc.Graph(id='price-dist', className='chart-container')
+                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'}),
+                
+                html.Div([
+                    dcc.Graph(id='year-trend', className='chart-container')
+                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'})
+            ], style={'marginBottom': '20px'}),
+            
+            html.Div([
+                html.Div([
+                    dcc.Graph(id='fuel-analysis', className='chart-container')
+                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'}),
+                
+                html.Div([
+                    dcc.Graph(id='correlation-heatmap', className='chart-container')
+                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'})
+            ])
+        ])
+    
+    elif active_tab == 'insights':
+        return html.Div([
+            html.H2("🎯 Market Insights & Trends", style={'color': colors['dark'], 'marginBottom': '30px'}),
+            
+            html.Div([
+                html.Div([
+                    dcc.Graph(id='brand-analysis', className='chart-container')
+                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'}),
+                
+                html.Div([
+                    dcc.Graph(id='owner-impact', className='chart-container')
+                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'})
+            ], style={'marginBottom': '20px'}),
+            
+            html.Div([
+                html.Div([
+                    dcc.Graph(id='mileage-price', className='chart-container')
+                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'}),
+                
+                html.Div([
+                    dcc.Graph(id='age-depreciation', className='chart-container')
+                ], className='mobile-full', style={'width': '50%', 'display': 'inline-block', 'padding': '10px'})
+            ])
         ])
 
 def create_comparison_chart():
@@ -381,14 +578,58 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             html.P("Make sure all fields are filled correctly.")
         ])
 
+# Enhanced analytics callbacks
+@callback(Output('dataset-stats', 'children'), Input('tabs', 'value'))
+def update_dataset_stats(tab):
+    if data.empty:
+        return html.P("No data available")
+    
+    stats = [
+        html.Div([
+            html.H4(f"{len(data):,}", style={'margin': '0', 'color': colors['primary']}),
+            html.P("Total Cars", style={'margin': '0'})
+        ], className='metric-card', style={'width': '18%', 'display': 'inline-block', 'margin': '1%'}),
+        
+        html.Div([
+            html.H4(f"₹{data['selling_price'].mean():,.0f}", style={'margin': '0', 'color': colors['secondary']}),
+            html.P("Avg Price", style={'margin': '0'})
+        ], className='metric-card', style={'width': '18%', 'display': 'inline-block', 'margin': '1%'}),
+        
+        html.Div([
+            html.H4(f"{data['year'].min()}-{data['year'].max()}", style={'margin': '0', 'color': colors['warning']}),
+            html.P("Year Range", style={'margin': '0'})
+        ], className='metric-card', style={'width': '18%', 'display': 'inline-block', 'margin': '1%'}),
+        
+        html.Div([
+            html.H4(f"{data['fuel'].nunique()}", style={'margin': '0', 'color': colors['accent']}),
+            html.P("Fuel Types", style={'margin': '0'})
+        ], className='metric-card', style={'width': '18%', 'display': 'inline-block', 'margin': '1%'}),
+        
+        html.Div([
+            html.H4(f"{data['km_driven'].median():,.0f}", style={'margin': '0', 'color': colors['dark']}),
+            html.P("Median KM", style={'margin': '0'})
+        ], className='metric-card', style={'width': '18%', 'display': 'inline-block', 'margin': '1%'})
+    ]
+    
+    return html.Div(stats, style={'textAlign': 'center'})
+
 @callback(Output('price-dist', 'figure'), Input('tabs', 'value'))
 def update_price_dist(tab):
     if data.empty:
         return go.Figure()
     
-    fig = px.histogram(data, x='selling_price', nbins=30, 
-                      title='Price Distribution')
-    fig.update_layout(template='plotly_white')
+    fig = px.histogram(data, x='selling_price', nbins=40, 
+                      title='💰 Price Distribution Analysis',
+                      labels={'selling_price': 'Selling Price (₹)', 'count': 'Number of Cars'},
+                      color_discrete_sequence=[colors['primary']])
+    
+    fig.add_vline(x=data['selling_price'].mean(), line_dash="dash", 
+                  annotation_text=f"Mean: ₹{data['selling_price'].mean():,.0f}")
+    fig.add_vline(x=data['selling_price'].median(), line_dash="dot", 
+                  annotation_text=f"Median: ₹{data['selling_price'].median():,.0f}")
+    
+    fig.update_layout(template='plotly_white', showlegend=False,
+                     title_font_size=16, title_x=0.5)
     return fig
 
 @callback(Output('year-trend', 'figure'), Input('tabs', 'value'))
@@ -396,10 +637,144 @@ def update_year_trend(tab):
     if data.empty:
         return go.Figure()
     
-    yearly_avg = data.groupby('year')['selling_price'].mean().reset_index()
-    fig = px.line(yearly_avg, x='year', y='selling_price', 
-                 title='Average Price by Year', markers=True)
-    fig.update_layout(template='plotly_white')
+    yearly_stats = data.groupby('year').agg({
+        'selling_price': ['mean', 'count', 'std']
+    }).round(0)
+    yearly_stats.columns = ['avg_price', 'count', 'std_price']
+    yearly_stats = yearly_stats.reset_index()
+    
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    
+    fig.add_trace(
+        go.Scatter(x=yearly_stats['year'], y=yearly_stats['avg_price'],
+                  mode='lines+markers', name='Average Price',
+                  line=dict(color=colors['primary'], width=3),
+                  marker=dict(size=8)),
+        secondary_y=False
+    )
+    
+    fig.add_trace(
+        go.Bar(x=yearly_stats['year'], y=yearly_stats['count'],
+               name='Car Count', opacity=0.3,
+               marker_color=colors['secondary']),
+        secondary_y=True
+    )
+    
+    fig.update_xaxes(title_text="Year")
+    fig.update_yaxes(title_text="Average Price (₹)", secondary_y=False)
+    fig.update_yaxes(title_text="Number of Cars", secondary_y=True)
+    fig.update_layout(title='📅 Price Trends Over Years', template='plotly_white',
+                     title_font_size=16, title_x=0.5)
+    return fig
+
+@callback(Output('fuel-analysis', 'figure'), Input('tabs', 'value'))
+def update_fuel_analysis(tab):
+    if data.empty:
+        return go.Figure()
+    
+    fuel_stats = data.groupby('fuel')['selling_price'].agg(['mean', 'count']).reset_index()
+    
+    fig = px.box(data, x='fuel', y='selling_price', 
+                title='⛽ Price Distribution by Fuel Type',
+                labels={'selling_price': 'Price (₹)', 'fuel': 'Fuel Type'},
+                color='fuel', color_discrete_sequence=px.colors.qualitative.Set2)
+    
+    fig.update_layout(template='plotly_white', showlegend=False,
+                     title_font_size=16, title_x=0.5)
+    return fig
+
+@callback(Output('correlation-heatmap', 'figure'), Input('tabs', 'value'))
+def update_correlation_heatmap(tab):
+    if data.empty:
+        return go.Figure()
+    
+    # Select numeric columns for correlation
+    numeric_cols = ['year', 'selling_price', 'km_driven', 'mileage', 'engine', 'max_power', 'seats']
+    available_cols = [col for col in numeric_cols if col in data.columns]
+    
+    if len(available_cols) < 2:
+        return go.Figure()
+    
+    corr_matrix = data[available_cols].corr()
+    
+    fig = px.imshow(corr_matrix, 
+                   title='🔗 Feature Correlation Matrix',
+                   color_continuous_scale='RdBu_r',
+                   aspect='auto')
+    
+    fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
+    return fig
+
+@callback(Output('brand-analysis', 'figure'), Input('tabs', 'value'))
+def update_brand_analysis(tab):
+    if data.empty or 'name' not in data.columns:
+        return go.Figure()
+    
+    # Extract brand from car name
+    data['brand'] = data['name'].str.split().str[0]
+    brand_stats = data.groupby('brand').agg({
+        'selling_price': 'mean',
+        'name': 'count'
+    }).round(0)
+    brand_stats.columns = ['avg_price', 'count']
+    brand_stats = brand_stats[brand_stats['count'] >= 10].sort_values('avg_price', ascending=True)
+    
+    fig = px.bar(brand_stats.reset_index(), x='avg_price', y='brand',
+                title='🏷️ Average Price by Brand (Min 10 cars)',
+                labels={'avg_price': 'Average Price (₹)', 'brand': 'Brand'},
+                orientation='h', color='avg_price',
+                color_continuous_scale='viridis')
+    
+    fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
+    return fig
+
+@callback(Output('owner-impact', 'figure'), Input('tabs', 'value'))
+def update_owner_impact(tab):
+    if data.empty:
+        return go.Figure()
+    
+    owner_stats = data.groupby('owner')['selling_price'].agg(['mean', 'count']).reset_index()
+    
+    fig = px.bar(owner_stats, x='owner', y='mean',
+                title='👥 Price Impact by Owner Type',
+                labels={'mean': 'Average Price (₹)', 'owner': 'Owner Type'},
+                color='mean', color_continuous_scale='blues')
+    
+    fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
+    return fig
+
+@callback(Output('mileage-price', 'figure'), Input('tabs', 'value'))
+def update_mileage_price(tab):
+    if data.empty:
+        return go.Figure()
+    
+    fig = px.scatter(data, x='mileage', y='selling_price', 
+                    color='fuel', size='engine',
+                    title='📊 Mileage vs Price Analysis',
+                    labels={'mileage': 'Mileage (kmpl)', 'selling_price': 'Price (₹)'},
+                    hover_data=['year', 'km_driven'])
+    
+    fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
+    return fig
+
+@callback(Output('age-depreciation', 'figure'), Input('tabs', 'value'))
+def update_age_depreciation(tab):
+    if data.empty:
+        return go.Figure()
+    
+    current_year = 2024
+    data['age'] = current_year - data['year']
+    
+    age_stats = data.groupby('age')['selling_price'].mean().reset_index()
+    
+    fig = px.line(age_stats, x='age', y='selling_price',
+                 title='📉 Car Depreciation by Age',
+                 labels={'age': 'Car Age (Years)', 'selling_price': 'Average Price (₹)'},
+                 markers=True, line_shape='spline')
+    
+    fig.update_traces(line=dict(color=colors['accent'], width=3),
+                     marker=dict(size=8, color=colors['accent']))
+    fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
     return fig
 
 if __name__ == '__main__':
