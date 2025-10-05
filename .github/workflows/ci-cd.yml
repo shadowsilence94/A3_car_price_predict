@@ -56,7 +56,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: shadowsilence94/car-price-predit
+        images: shadowsilence94/car-price-predict
         tags: |
           type=semver,pattern={{raw}}
           type=raw,value=latest
@@ -76,10 +76,23 @@ jobs:
     environment: production
     
     steps:
-    - name: Deploy notification
-      run: |
-        echo "✅ Docker image built and pushed successfully"
-        echo "🚀 Tagged Image: shadowsilence94/car-price-predit:${{ github.ref_name }}"
-        echo "🚀 Latest Image: shadowsilence94/car-price-predit:latest"
-        echo "📱 Use manual deployment script or deploy directly:"
-        echo "   ssh mlbrain 'cd ~/st126010/car-predictor && docker compose down && docker pull shadowsilence94/car-price-predit:latest && docker compose up -d'"
+    - name: Deploy to remote server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.REMOTE_HOST }}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        proxy_host: ${{ secrets.PROXY_HOST }}
+        proxy_username: ${{ secrets.PROXY_USER }}
+        proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        timeout: 60s
+        script: |
+          echo "Current directory: $(pwd)"
+          echo "Home directory: $HOME"
+          ls -la
+          cd ~/car-predictor || cd ./car-predictor || { echo "car-predictor directory not found"; exit 1; }
+          echo "In car-predictor directory: $(pwd)"
+          docker compose down || true
+          docker pull shadowsilence94/car-price-predict:${{ github.ref_name }} || docker pull shadowsilence94/car-price-predict:latest
+          docker compose up -d
+          docker system prune -f
