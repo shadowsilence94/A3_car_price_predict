@@ -152,17 +152,17 @@ colors = {
 
 # Layout with responsive design
 app.layout = html.Div([
-    # Header with responsive design
+    # Header with responsive design and better alignment
     html.Div([
         html.Div([
             html.H1("🚗 Car Price Analytics Dashboard", 
-                   style={'margin': '0', 'fontSize': '28px', 'fontWeight': 'bold'}),
+                   style={'margin': '0', 'fontSize': '28px', 'fontWeight': 'bold', 'textAlign': 'center'}),
             html.P("Advanced ML Models & Data Insights | st126010 - Htut Ko Ko", 
-                  style={'margin': '5px 0 0 0', 'fontSize': '16px', 'opacity': '0.9'})
-        ], className='mobile-padding')
+                  style={'margin': '5px 0 0 0', 'fontSize': '16px', 'opacity': '0.9', 'textAlign': 'center'})
+        ], style={'padding': '20px'})
     ], style={
         'background': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        'color': 'white', 'padding': '20px', 'marginBottom': '20px',
+        'color': 'white', 'marginBottom': '30px',
         'borderRadius': '0 0 20px 20px'
     }),
     
@@ -178,7 +178,7 @@ app.layout = html.Div([
                style={'padding': '12px 20px'}, selected_style={'backgroundColor': colors['primary'], 'color': 'white'})
     ], style={'marginBottom': '20px'}),
     
-    html.Div(id='tab-content', className='tab-content', style={'padding': '0 20px'})
+    html.Div(id='tab-content', className='tab-content', style={'padding': '0 30px', 'maxWidth': '1200px', 'margin': '0 auto'})
 ], style={
     'fontFamily': '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif', 
     'backgroundColor': '#f8f9fa', 'minHeight': '100vh', 'margin': '0', 'padding': '0'
@@ -188,29 +188,29 @@ app.layout = html.Div([
 def render_content(active_tab):
     if active_tab == 'comparison':
         return html.Div([
-            # Key Metrics Cards - Better alignment
+            # Key Metrics Cards - Fixed spacing and alignment
             html.Div([
                 html.Div([
                     html.H3("3", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("ML Models", style={'margin': '5px 0'})
-                ], className='metric-card mobile-full', style={
-                    'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%'
+                ], className='metric-card', style={
+                    'width': '28%', 'display': 'inline-block', 'margin': '0 2.5%', 'verticalAlign': 'top'
                 }),
                 
                 html.Div([
                     html.H3("91.01%", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("Best R² Score", style={'margin': '5px 0'})
-                ], className='metric-card mobile-full', style={
-                    'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%'
+                ], className='metric-card', style={
+                    'width': '28%', 'display': 'inline-block', 'margin': '0 2.5%', 'verticalAlign': 'top'
                 }),
                 
                 html.Div([
                     html.H3("70.48%", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("Classification Accuracy", style={'margin': '5px 0'})
-                ], className='metric-card mobile-full', style={
-                    'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%'
+                ], className='metric-card', style={
+                    'width': '28%', 'display': 'inline-block', 'margin': '0 2.5%', 'verticalAlign': 'top'
                 })
-            ], style={'textAlign': 'center', 'marginBottom': '30px'}),
+            ], style={'textAlign': 'center', 'marginBottom': '40px'}),
             
             html.Div([
                 html.H2("🎯 Assignment Evolution & Results", style={'color': colors['dark'], 'marginBottom': '20px'}),
@@ -243,9 +243,9 @@ def render_content(active_tab):
                 html.H2("🔮 Intelligent Car Price Prediction", style={'color': colors['dark'], 'marginBottom': '20px'}),
                 
                 html.Div([
-                    # Input form - responsive with better alignment
+                    # Input form - better spacing and alignment
                     html.Div([
-                        html.H4("🚗 Vehicle Configuration", style={'color': colors['primary'], 'textAlign': 'center'}),
+                        html.H4("🚗 Vehicle Configuration", style={'color': colors['primary'], 'textAlign': 'center', 'marginBottom': '20px'}),
                         
                         html.Label("🤖 Select ML Model:", style={'fontWeight': 'bold', 'marginBottom': '5px'}),
                         dcc.Dropdown(
@@ -339,24 +339,27 @@ def render_content(active_tab):
                         html.Button('🎯 Predict Price', id='predict-button', n_clicks=0, 
                                    style=button_style, className='mobile-full')
                         
-                    ], className='mobile-full', style={
-                        'width': '48%', 'display': 'inline-block', 'verticalAlign': 'top',
-                        'paddingRight': '2%'
+                    ], style={
+                        'width': '47%', 'display': 'inline-block', 'verticalAlign': 'top',
+                        'margin': '0 1.5%', 'backgroundColor': 'white', 'padding': '20px',
+                        'borderRadius': '12px', 'boxShadow': '0 4px 12px rgba(0,0,0,0.1)'
                     }),
                     
-                    # Results - responsive with better alignment
+                    # Results - better spacing and alignment
                     html.Div([
-                        html.H4("📊 Prediction Results", style={'color': colors['primary'], 'textAlign': 'center'}),
+                        html.H4("📊 Prediction Results", style={'color': colors['primary'], 'textAlign': 'center', 'marginBottom': '20px'}),
                         html.Div(id='prediction-output', style={
                             'padding': '20px', 'backgroundColor': '#f8f9fa',
                             'borderRadius': '12px', 'minHeight': '300px',
                             'border': '2px dashed #dee2e6'
                         })
-                    ], className='mobile-full', style={
-                        'width': '48%', 'float': 'right', 'verticalAlign': 'top'
+                    ], style={
+                        'width': '47%', 'display': 'inline-block', 'verticalAlign': 'top',
+                        'margin': '0 1.5%', 'backgroundColor': 'white', 'padding': '20px',
+                        'borderRadius': '12px', 'boxShadow': '0 4px 12px rgba(0,0,0,0.1)'
                     })
                     
-                ], style={'overflow': 'hidden', 'textAlign': 'left'})
+                ], style={'textAlign': 'center'})
             ], style=card_style)
         ])
     
@@ -370,36 +373,40 @@ def render_content(active_tab):
                 html.Div(id='dataset-stats')
             ], style=card_style),
             
-            # Charts Grid - Fixed alignment
+            # Charts Grid - 2 per row with proper spacing
             html.Div([
                 html.Div([
                     dcc.Graph(id='price-dist', className='chart-container')
-                ], className='mobile-full', style={
-                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
-                    'verticalAlign': 'top', 'marginRight': '2%'
+                ], style={
+                    'width': '47%', 'display': 'inline-block', 'margin': '0 1.5%',
+                    'verticalAlign': 'top', 'backgroundColor': 'white', 'borderRadius': '12px',
+                    'boxShadow': '0 4px 12px rgba(0,0,0,0.1)', 'padding': '15px'
                 }),
                 
                 html.Div([
                     dcc.Graph(id='year-trend', className='chart-container')
-                ], className='mobile-full', style={
-                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
-                    'verticalAlign': 'top'
+                ], style={
+                    'width': '47%', 'display': 'inline-block', 'margin': '0 1.5%',
+                    'verticalAlign': 'top', 'backgroundColor': 'white', 'borderRadius': '12px',
+                    'boxShadow': '0 4px 12px rgba(0,0,0,0.1)', 'padding': '15px'
                 })
-            ], style={'marginBottom': '20px', 'textAlign': 'center'}),
+            ], style={'marginBottom': '30px', 'textAlign': 'center'}),
             
             html.Div([
                 html.Div([
                     dcc.Graph(id='fuel-analysis', className='chart-container')
-                ], className='mobile-full', style={
-                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
-                    'verticalAlign': 'top', 'marginRight': '2%'
+                ], style={
+                    'width': '47%', 'display': 'inline-block', 'margin': '0 1.5%',
+                    'verticalAlign': 'top', 'backgroundColor': 'white', 'borderRadius': '12px',
+                    'boxShadow': '0 4px 12px rgba(0,0,0,0.1)', 'padding': '15px'
                 }),
                 
                 html.Div([
                     dcc.Graph(id='correlation-heatmap', className='chart-container')
-                ], className='mobile-full', style={
-                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
-                    'verticalAlign': 'top'
+                ], style={
+                    'width': '47%', 'display': 'inline-block', 'margin': '0 1.5%',
+                    'verticalAlign': 'top', 'backgroundColor': 'white', 'borderRadius': '12px',
+                    'boxShadow': '0 4px 12px rgba(0,0,0,0.1)', 'padding': '15px'
                 })
             ], style={'textAlign': 'center'})
         ])
@@ -411,32 +418,36 @@ def render_content(active_tab):
             html.Div([
                 html.Div([
                     dcc.Graph(id='brand-analysis', className='chart-container')
-                ], className='mobile-full', style={
-                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
-                    'verticalAlign': 'top', 'marginRight': '2%'
+                ], style={
+                    'width': '47%', 'display': 'inline-block', 'margin': '0 1.5%',
+                    'verticalAlign': 'top', 'backgroundColor': 'white', 'borderRadius': '12px',
+                    'boxShadow': '0 4px 12px rgba(0,0,0,0.1)', 'padding': '15px'
                 }),
                 
                 html.Div([
                     dcc.Graph(id='owner-impact', className='chart-container')
-                ], className='mobile-full', style={
-                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
-                    'verticalAlign': 'top'
+                ], style={
+                    'width': '47%', 'display': 'inline-block', 'margin': '0 1.5%',
+                    'verticalAlign': 'top', 'backgroundColor': 'white', 'borderRadius': '12px',
+                    'boxShadow': '0 4px 12px rgba(0,0,0,0.1)', 'padding': '15px'
                 })
-            ], style={'marginBottom': '20px', 'textAlign': 'center'}),
+            ], style={'marginBottom': '30px', 'textAlign': 'center'}),
             
             html.Div([
                 html.Div([
                     dcc.Graph(id='mileage-price', className='chart-container')
-                ], className='mobile-full', style={
-                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
-                    'verticalAlign': 'top', 'marginRight': '2%'
+                ], style={
+                    'width': '47%', 'display': 'inline-block', 'margin': '0 1.5%',
+                    'verticalAlign': 'top', 'backgroundColor': 'white', 'borderRadius': '12px',
+                    'boxShadow': '0 4px 12px rgba(0,0,0,0.1)', 'padding': '15px'
                 }),
                 
                 html.Div([
                     dcc.Graph(id='age-depreciation', className='chart-container')
-                ], className='mobile-full', style={
-                    'width': '48%', 'display': 'inline-block', 'padding': '10px',
-                    'verticalAlign': 'top'
+                ], style={
+                    'width': '47%', 'display': 'inline-block', 'margin': '0 1.5%',
+                    'verticalAlign': 'top', 'backgroundColor': 'white', 'borderRadius': '12px',
+                    'boxShadow': '0 4px 12px rgba(0,0,0,0.1)', 'padding': '15px'
                 })
             ], style={'textAlign': 'center'})
         ])
