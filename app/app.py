@@ -131,7 +131,7 @@ card_style = {
 
 input_style = {
     'width': '100%', 'padding': '10px', 'borderRadius': '8px',
-    'border': '1px solid #ddd', 'marginBottom': '15px', 'fontSize': '14px'
+    'border': '1px solid #ddd', 'marginBottom': '20px', 'fontSize': '14px'
 }
 
 button_style = {
@@ -213,27 +213,35 @@ def render_content(active_tab):
             ], style={'textAlign': 'center', 'marginBottom': '40px'}),
             
             html.Div([
-                html.H2("🎯 Assignment Evolution & Results", style={'color': colors['dark'], 'marginBottom': '20px'}),
-                dash_table.DataTable(
-                    data=model_comparison.to_dict('records'),
-                    columns=[{"name": i, "id": i} for i in model_comparison.columns],
-                    style_cell={
-                        'textAlign': 'left', 'padding': '12px', 'fontSize': '14px',
-                        'fontFamily': 'inherit', 'border': '1px solid #e1e8ed'
-                    },
-                    style_header={
-                        'backgroundColor': colors['primary'], 'color': 'white', 
-                        'fontWeight': 'bold', 'fontSize': '15px'
-                    },
-                    style_data_conditional=[{
-                        'if': {'row_index': 2}, 
-                        'backgroundColor': '#e8f5e8', 'border': '2px solid #27ae60'
-                    }],
-                    style_table={'overflowX': 'auto'}
-                ),
+                html.H2("🎯 Assignment Evolution & Results", style={'color': colors['dark'], 'marginBottom': '30px', 'textAlign': 'center'}),
+                
+                # Model comparison table with better spacing
+                html.Div([
+                    dash_table.DataTable(
+                        data=model_comparison.to_dict('records'),
+                        columns=[{"name": i, "id": i} for i in model_comparison.columns],
+                        style_cell={
+                            'textAlign': 'left', 'padding': '15px', 'fontSize': '14px',
+                            'fontFamily': 'inherit', 'border': '1px solid #e1e8ed',
+                            'whiteSpace': 'normal', 'height': 'auto'
+                        },
+                        style_header={
+                            'backgroundColor': colors['primary'], 'color': 'white', 
+                            'fontWeight': 'bold', 'fontSize': '15px', 'padding': '15px'
+                        },
+                        style_data_conditional=[{
+                            'if': {'row_index': 2}, 
+                            'backgroundColor': '#e8f5e8', 'border': '2px solid #27ae60'
+                        }],
+                        style_table={'overflowX': 'auto', 'marginBottom': '30px'},
+                        style_data={'whiteSpace': 'normal', 'height': 'auto', 'lineHeight': '20px'}
+                    )
+                ], style=card_style),
+                
+                # Chart with better spacing
                 html.Div([
                     dcc.Graph(figure=create_comparison_chart(), className='chart-container')
-                ], style={'marginTop': '30px'})
+                ], style={**card_style, 'marginTop': '30px'})
             ], style=card_style)
         ])
     
@@ -264,14 +272,14 @@ def render_content(active_tab):
                                 html.Label("📅 Year:", style={'fontWeight': 'bold'}),
                                 dcc.Input(id='year-input', type='number', value=2015, 
                                          min=2000, max=2024, style=input_style)
-                            ], className='mobile-full', style={'width': '48%', 'display': 'inline-block', 'marginRight': '4%'}),
+                            ], style={'width': '48%', 'display': 'inline-block', 'marginRight': '4%'}),
                             
                             html.Div([
                                 html.Label("🛣️ KM Driven:", style={'fontWeight': 'bold'}),
                                 dcc.Input(id='km-input', type='number', value=50000, 
                                          min=0, style=input_style)
-                            ], className='mobile-full', style={'width': '48%', 'display': 'inline-block'})
-                        ], className='mobile-stack', style={'display': 'flex', 'marginBottom': '10px'}),
+                            ], style={'width': '48%', 'display': 'inline-block'})
+                        ], style={'marginBottom': '15px'}),
                         
                         html.Div([
                             html.Div([
@@ -280,17 +288,17 @@ def render_content(active_tab):
                                            options=[{'label': '⛽ Petrol', 'value': 'Petrol'},
                                                   {'label': '🛢️ Diesel', 'value': 'Diesel'},
                                                   {'label': '🌿 CNG', 'value': 'CNG'}],
-                                           value='Petrol', style={'marginBottom': '15px'})
-                            ], className='mobile-full', style={'width': '48%', 'display': 'inline-block', 'marginRight': '4%'}),
+                                           value='Petrol', style={'marginBottom': '20px'})
+                            ], style={'width': '48%', 'display': 'inline-block', 'marginRight': '4%'}),
                             
                             html.Div([
                                 html.Label("🏪 Seller Type:", style={'fontWeight': 'bold'}),
                                 dcc.Dropdown(id='seller-dropdown',
                                            options=[{'label': '👤 Individual', 'value': 'Individual'},
                                                   {'label': '🏢 Dealer', 'value': 'Dealer'}],
-                                           value='Individual', style={'marginBottom': '15px'})
-                            ], className='mobile-full', style={'width': '48%', 'display': 'inline-block'})
-                        ], className='mobile-stack', style={'display': 'flex'}),
+                                           value='Individual', style={'marginBottom': '20px'})
+                            ], style={'width': '48%', 'display': 'inline-block'})
+                        ], style={'marginBottom': '15px'}),
                         
                         html.Div([
                             html.Div([
@@ -336,8 +344,9 @@ def render_content(active_tab):
                         dcc.Input(id='seats-input', type='number', value=5, 
                                  min=2, max=8, style=input_style),
                         
+                        html.Div(style={'height': '20px'}),  # Add spacing before button
                         html.Button('🎯 Predict Price', id='predict-button', n_clicks=0, 
-                                   style=button_style, className='mobile-full')
+                                   style={**button_style, 'marginTop': '15px'})
                         
                     ], style={
                         'width': '47%', 'display': 'inline-block', 'verticalAlign': 'top',
