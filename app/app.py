@@ -47,13 +47,13 @@ try:
 except:
     data = pd.DataFrame()
 
-# Model comparison data (aligned with actual results)
+# Model comparison data (aligned with current actual results)
 model_comparison = pd.DataFrame({
     'Assignment': ['A1', 'A2', 'A3'],
     'Model Type': ['Linear Regression', 'Enhanced Linear Regression', 'Logistic Classification'],
     'Problem Type': ['Regression', 'Regression', 'Classification'],
-    'Best Score': ['R² = 0.6864', 'R² = 0.9101', 'Accuracy = 70.48%'],
-    'Key Features': ['Basic implementation + proper pipeline', 'Polynomial features + Lasso regularization', 'Custom logistic regression + Ridge penalty']
+    'Best Score': ['R² = 0.7657', 'R² = 0.9101', 'Accuracy = 74.05%'],
+    'Key Features': ['Proper ML pipeline + log transform', 'Polynomial features + Lasso regularization', 'Custom logistic regression + Ridge penalty']
 })
 
 # Initialize app with external CSS
@@ -207,7 +207,7 @@ def render_content(active_tab):
                 }),
                 
                 html.Div([
-                    html.H3("70.48%", style={'fontSize': '36px', 'margin': '0'}),
+                    html.H3("74.05%", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("Classification Accuracy", style={'margin': '5px 0'})
                 ], className='metric-card', style={
                     'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%', 
@@ -262,9 +262,9 @@ def render_content(active_tab):
                         dcc.Dropdown(
                             id='model-dropdown',
                             options=[
-                                {'label': 'A1 - Linear Regression (R² = 68.64%)', 'value': 'A1'},
+                                {'label': 'A1 - Linear Regression (R² = 76.57%)', 'value': 'A1'},
                                 {'label': 'A2 - Enhanced Regression (R² = 91.01%)', 'value': 'A2'},
-                                {'label': 'A3 - Smart Classification (Acc = 70.48%)', 'value': 'A3'}
+                                {'label': 'A3 - Smart Classification (Acc = 74.05%)', 'value': 'A3'}
                             ],
                             value='A3',
                             style={'marginBottom': '20px'}
@@ -475,7 +475,7 @@ def render_content(active_tab):
 
 def create_comparison_chart():
     models_list = ['A1 Linear', 'A2 Enhanced', 'A3 Classification']
-    scores = [0.6864, 0.9101, 0.7048]  # Correct scores from actual model artifacts
+    scores = [0.7657, 0.9101, 0.7405]  # Updated with current actual results
     
     fig = go.Figure()
     fig.add_trace(go.Bar(
@@ -511,7 +511,7 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             html.Ul([
                 html.Li("A1: Linear Regression (R² = 0.6040)"),
                 html.Li("A2: Enhanced with Polynomial Features (R² = 0.8472)"),
-                html.Li("A3: Car Price Classification (70.48% accuracy)")
+                html.Li("A3: Car Price Classification (74.05% accuracy)")
             ])
         ])
     
@@ -612,7 +612,7 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             return html.Div([
                 html.H4("A3 Logistic Classification Result", style={'color': '#27ae60'}),
                 html.H3(f"Price Class {int(prediction)}: {class_name}", style={'color': '#3498db'}),
-                html.P("Model Accuracy: 70.48%", style={'fontSize': '16px', 'fontWeight': 'bold'}),
+                html.P("Model Accuracy: 74.05%", style={'fontSize': '16px', 'fontWeight': 'bold'}),
                 html.P("Macro F1-Score: 0.6842"),
                 html.P("✅ Custom logistic regression with Ridge regularization"),
                 html.Hr(),
