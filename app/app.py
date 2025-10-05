@@ -155,7 +155,7 @@ app.layout = html.Div([
     # Header with responsive design and better alignment
     html.Div([
         html.Div([
-            html.H1("🚗 Car Price Analytics Dashboard", 
+            html.H1("Car Price Analytics Dashboard", 
                    style={'margin': '0', 'fontSize': '28px', 'fontWeight': 'bold', 'textAlign': 'center'}),
             html.P("Advanced ML Models & Data Insights | st126010 - Htut Ko Ko", 
                   style={'margin': '5px 0 0 0', 'fontSize': '16px', 'opacity': '0.9', 'textAlign': 'center'})
@@ -168,13 +168,13 @@ app.layout = html.Div([
     
     # Enhanced Tabs with icons
     dcc.Tabs(id="tabs", value='analytics', children=[
-        dcc.Tab(label='📊 Model Comparison', value='comparison', 
+        dcc.Tab(label='Model Comparison', value='comparison', 
                style={'padding': '12px 20px'}, selected_style={'backgroundColor': colors['primary'], 'color': 'white'}),
-        dcc.Tab(label='🔮 Price Prediction', value='prediction',
+        dcc.Tab(label='Price Prediction', value='prediction',
                style={'padding': '12px 20px'}, selected_style={'backgroundColor': colors['primary'], 'color': 'white'}),
-        dcc.Tab(label='📈 Data Analytics', value='analytics',
+        dcc.Tab(label='Data Analytics', value='analytics',
                style={'padding': '12px 20px'}, selected_style={'backgroundColor': colors['primary'], 'color': 'white'}),
-        dcc.Tab(label='🎯 Market Insights', value='insights',
+        dcc.Tab(label='Market Insights', value='insights',
                style={'padding': '12px 20px'}, selected_style={'backgroundColor': colors['primary'], 'color': 'white'})
     ], style={'marginBottom': '20px'}),
     
@@ -188,32 +188,35 @@ app.layout = html.Div([
 def render_content(active_tab):
     if active_tab == 'comparison':
         return html.Div([
-            # Key Metrics Cards - Fixed spacing to prevent touching
+            # Key Metrics Cards - Horizontal alignment fixed
             html.Div([
                 html.Div([
                     html.H3("3", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("ML Models", style={'margin': '5px 0'})
                 ], className='metric-card', style={
-                    'width': '26%', 'display': 'inline-block', 'margin': '0 3.5%', 'verticalAlign': 'top'
+                    'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%', 
+                    'verticalAlign': 'top', 'minHeight': '120px'
                 }),
                 
                 html.Div([
                     html.H3("91.01%", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("Best R² Score", style={'margin': '5px 0'})
                 ], className='metric-card', style={
-                    'width': '26%', 'display': 'inline-block', 'margin': '0 3.5%', 'verticalAlign': 'top'
+                    'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%', 
+                    'verticalAlign': 'top', 'minHeight': '120px'
                 }),
                 
                 html.Div([
                     html.H3("70.48%", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("Classification Accuracy", style={'margin': '5px 0'})
                 ], className='metric-card', style={
-                    'width': '26%', 'display': 'inline-block', 'margin': '0 3.5%', 'verticalAlign': 'top'
+                    'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%', 
+                    'verticalAlign': 'top', 'minHeight': '120px'
                 })
-            ], style={'textAlign': 'center', 'marginBottom': '40px'}),
+            ], style={'textAlign': 'center', 'marginBottom': '40px', 'whiteSpace': 'nowrap'}),
             
             html.Div([
-                html.H2("🎯 Assignment Evolution & Results", style={'color': colors['dark'], 'marginBottom': '30px', 'textAlign': 'center'}),
+                html.H2("Assignment Evolution & Results", style={'color': colors['dark'], 'marginBottom': '30px', 'textAlign': 'center'}),
                 
                 # Model comparison table with better spacing
                 html.Div([
@@ -352,7 +355,9 @@ def render_content(active_tab):
                                        'borderRadius': '8px', 'cursor': 'pointer', 
                                        'width': '100%', 'fontSize': '16px', 
                                        'fontWeight': 'bold', 'marginTop': '15px',
-                                       'textTransform': 'uppercase', 'letterSpacing': '1px'
+                                       'textTransform': 'uppercase', 'letterSpacing': '1px',
+                                       'display': 'flex', 'alignItems': 'center', 
+                                       'justifyContent': 'center', 'minHeight': '50px'
                                    })
                         
                     ], style={
@@ -385,7 +390,7 @@ def render_content(active_tab):
             
             # Summary Statistics
             html.Div([
-                html.H3("📊 Dataset Overview", style={'marginBottom': '20px'}),
+                html.H3("Dataset Overview", style={'marginBottom': '20px'}),
                 html.Div(id='dataset-stats')
             ], style=card_style),
             
@@ -429,7 +434,7 @@ def render_content(active_tab):
     
     elif active_tab == 'insights':
         return html.Div([
-            html.H2("🎯 Market Insights & Trends", style={'color': colors['dark'], 'marginBottom': '30px'}),
+            html.H2("Market Insights & Trends", style={'color': colors['dark'], 'marginBottom': '30px'}),
             
             html.Div([
                 html.Div([
@@ -859,7 +864,7 @@ def update_mileage_price(tab):
         fig = px.scatter(data_clean, x='mileage', y='selling_price', 
                         color='fuel' if 'fuel' in data_clean.columns else None,
                         size='engine' if 'engine' in data_clean.columns and not data_clean['engine'].isna().all() else None,
-                        title='📊 Mileage vs Price Analysis',
+                        title='Mileage vs Price Analysis',
                         labels={'mileage': 'Mileage (kmpl)', 'selling_price': 'Price'},
                         hover_data=['year', 'km_driven'] if all(col in data_clean.columns for col in ['year', 'km_driven']) else None)
         
