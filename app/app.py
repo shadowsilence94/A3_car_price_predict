@@ -470,7 +470,7 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             
             return html.Div([
                 html.H4("A1 Linear Regression Result", style={'color': '#e74c3c'}),
-                html.H3(f"Predicted Price: ₹{prediction:,.0f}", style={'color': '#27ae60'}),
+                html.H3(f"Predicted Price: {prediction:,.0f}", style={'color': '#27ae60'}),
                 html.P(f"Model R² Score: {model_data['metrics']['test_r2']:.4f}"),
                 html.P("✅ Basic linear regression with proper pipeline"),
                 html.Hr(),
@@ -503,7 +503,7 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             
             return html.Div([
                 html.H4("A2 Enhanced Linear Regression Result", style={'color': '#f39c12'}),
-                html.H3(f"Predicted Price: ₹{prediction:,.0f}", style={'color': '#27ae60'}),
+                html.H3(f"Predicted Price: {prediction:,.0f}", style={'color': '#27ae60'}),
                 html.P(f"Model R² Score: {model_data['metrics']['test_r2']:.4f}"),
                 html.P("✅ Enhanced with polynomial features and Lasso regularization"),
                 html.Hr(),
@@ -534,10 +534,10 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             
             # Price class mapping (updated to match improved model)
             price_classes = {
-                0: "Low (₹0 - ₹3.5 Lakhs)",
-                1: "Medium (₹3.5 - ₹7 Lakhs)", 
-                2: "High (₹7 - ₹15 Lakhs)",
-                3: "Premium (Above ₹15 Lakhs)"
+                0: "Low (0 - 3.5 Lakhs)",
+                1: "Medium (3.5 - 7 Lakhs)", 
+                2: "High (7 - 15 Lakhs)",
+                3: "Premium (Above 15 Lakhs)"
             }
             
             class_name = price_classes.get(int(prediction), "Unknown")
@@ -591,7 +591,7 @@ def update_dataset_stats(tab):
         ], className='metric-card', style={'width': '18%', 'display': 'inline-block', 'margin': '1%'}),
         
         html.Div([
-            html.H4(f"₹{data['selling_price'].mean():,.0f}", style={'margin': '0', 'color': colors['secondary']}),
+            html.H4(f"{data['selling_price'].mean():,.0f}", style={'margin': '0', 'color': colors['secondary']}),
             html.P("Avg Price", style={'margin': '0'})
         ], className='metric-card', style={'width': '18%', 'display': 'inline-block', 'margin': '1%'}),
         
@@ -620,13 +620,13 @@ def update_price_dist(tab):
     
     fig = px.histogram(data, x='selling_price', nbins=40, 
                       title='💰 Price Distribution Analysis',
-                      labels={'selling_price': 'Selling Price (₹)', 'count': 'Number of Cars'},
+                      labels={'selling_price': 'Selling Price', 'count': 'Number of Cars'},
                       color_discrete_sequence=[colors['primary']])
     
     fig.add_vline(x=data['selling_price'].mean(), line_dash="dash", 
-                  annotation_text=f"Mean: ₹{data['selling_price'].mean():,.0f}")
+                  annotation_text=f"Mean: {data['selling_price'].mean():,.0f}")
     fig.add_vline(x=data['selling_price'].median(), line_dash="dot", 
-                  annotation_text=f"Median: ₹{data['selling_price'].median():,.0f}")
+                  annotation_text=f"Median: {data['selling_price'].median():,.0f}")
     
     fig.update_layout(template='plotly_white', showlegend=False,
                      title_font_size=16, title_x=0.5)
@@ -661,7 +661,7 @@ def update_year_trend(tab):
     )
     
     fig.update_xaxes(title_text="Year")
-    fig.update_yaxes(title_text="Average Price (₹)", secondary_y=False)
+    fig.update_yaxes(title_text="Average Price", secondary_y=False)
     fig.update_yaxes(title_text="Number of Cars", secondary_y=True)
     fig.update_layout(title='📅 Price Trends Over Years', template='plotly_white',
                      title_font_size=16, title_x=0.5)
@@ -676,7 +676,7 @@ def update_fuel_analysis(tab):
     
     fig = px.box(data, x='fuel', y='selling_price', 
                 title='⛽ Price Distribution by Fuel Type',
-                labels={'selling_price': 'Price (₹)', 'fuel': 'Fuel Type'},
+                labels={'selling_price': 'Price', 'fuel': 'Fuel Type'},
                 color='fuel', color_discrete_sequence=px.colors.qualitative.Set2)
     
     fig.update_layout(template='plotly_white', showlegend=False,
@@ -745,7 +745,7 @@ def update_brand_analysis(tab):
     
     fig = px.bar(brand_stats.reset_index(), x='avg_price', y='brand',
                 title='🏷️ Average Price by Brand (Min 10 cars)',
-                labels={'avg_price': 'Average Price (₹)', 'brand': 'Brand'},
+                labels={'avg_price': 'Average Price', 'brand': 'Brand'},
                 orientation='h', color='avg_price',
                 color_continuous_scale='viridis')
     
@@ -761,7 +761,7 @@ def update_owner_impact(tab):
     
     fig = px.bar(owner_stats, x='owner', y='mean',
                 title='👥 Price Impact by Owner Type',
-                labels={'mean': 'Average Price (₹)', 'owner': 'Owner Type'},
+                labels={'mean': 'Average Price', 'owner': 'Owner Type'},
                 color='mean', color_continuous_scale='blues')
     
     fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
@@ -796,7 +796,7 @@ def update_mileage_price(tab):
                         color='fuel' if 'fuel' in data_clean.columns else None,
                         size='engine' if 'engine' in data_clean.columns and not data_clean['engine'].isna().all() else None,
                         title='📊 Mileage vs Price Analysis',
-                        labels={'mileage': 'Mileage (kmpl)', 'selling_price': 'Price (₹)'},
+                        labels={'mileage': 'Mileage (kmpl)', 'selling_price': 'Price'},
                         hover_data=['year', 'km_driven'] if all(col in data_clean.columns for col in ['year', 'km_driven']) else None)
         
         fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
@@ -818,7 +818,7 @@ def update_age_depreciation(tab):
     
     fig = px.line(age_stats, x='age', y='selling_price',
                  title='📉 Car Depreciation by Age',
-                 labels={'age': 'Car Age (Years)', 'selling_price': 'Average Price (₹)'},
+                 labels={'age': 'Car Age (Years)', 'selling_price': 'Average Price'},
                  markers=True, line_shape='spline')
     
     fig.update_traces(line=dict(color=colors['accent'], width=3),
