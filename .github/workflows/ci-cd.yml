@@ -78,6 +78,18 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
+    - name: Copy docker-compose to server
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.REMOTE_HOST }}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        proxy_host: ${{ secrets.PROXY_HOST }}
+        proxy_username: ${{ secrets.PROXY_USER }}
+        proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "docker-compose-server.yml"
+        target: "~/st126010/car-predictor/docker-compose.yml"
+    
     - name: Deploy to remote server
       uses: appleboy/ssh-action@v1.0.0
       with:
@@ -90,27 +102,11 @@ jobs:
         timeout: 60s
         script: |
           /bin/bash -c '
-          echo "Setting up deployment directory"
-          mkdir -p car-predictor
-          cd car-predictor
-          cat > docker-compose.yml << EOF
-          version: "3.8"
-          services:
-            car-price-app:
-              image: shadowsilence94/car-price-predict:latest
-              ports:
-                - "8050:8050"
-              restart: unless-stopped
-              environment:
-                - PYTHONUNBUFFERED=1
-          EOF
-          echo "Stopping existing containers"
+          cd ~/st126010/car-predictor
+          echo "In directory: $(pwd)"
           /usr/local/bin/docker compose down || true
-          echo "Pulling latest image"
           /usr/local/bin/docker pull shadowsilence94/car-price-predict:latest
-          echo "Starting new containers"
           /usr/local/bin/docker compose up -d
-          echo "Cleaning up old images"
           /usr/local/bin/docker system prune -f
           echo "Deployment completed successfully"
           '
