@@ -188,27 +188,27 @@ app.layout = html.Div([
 def render_content(active_tab):
     if active_tab == 'comparison':
         return html.Div([
-            # Key Metrics Cards - Fixed spacing and alignment
+            # Key Metrics Cards - Fixed spacing to prevent touching
             html.Div([
                 html.Div([
                     html.H3("3", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("ML Models", style={'margin': '5px 0'})
                 ], className='metric-card', style={
-                    'width': '28%', 'display': 'inline-block', 'margin': '0 2.5%', 'verticalAlign': 'top'
+                    'width': '26%', 'display': 'inline-block', 'margin': '0 3.5%', 'verticalAlign': 'top'
                 }),
                 
                 html.Div([
                     html.H3("91.01%", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("Best R² Score", style={'margin': '5px 0'})
                 ], className='metric-card', style={
-                    'width': '28%', 'display': 'inline-block', 'margin': '0 2.5%', 'verticalAlign': 'top'
+                    'width': '26%', 'display': 'inline-block', 'margin': '0 3.5%', 'verticalAlign': 'top'
                 }),
                 
                 html.Div([
                     html.H3("70.48%", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("Classification Accuracy", style={'margin': '5px 0'})
                 ], className='metric-card', style={
-                    'width': '28%', 'display': 'inline-block', 'margin': '0 2.5%', 'verticalAlign': 'top'
+                    'width': '26%', 'display': 'inline-block', 'margin': '0 3.5%', 'verticalAlign': 'top'
                 })
             ], style={'textAlign': 'center', 'marginBottom': '40px'}),
             
@@ -253,29 +253,29 @@ def render_content(active_tab):
                 html.Div([
                     # Input form - better spacing and alignment
                     html.Div([
-                        html.H4("🚗 Vehicle Configuration", style={'color': colors['primary'], 'textAlign': 'center', 'marginBottom': '20px'}),
+                        html.H4("Vehicle Configuration", style={'color': colors['primary'], 'textAlign': 'center', 'marginBottom': '20px'}),
                         
-                        html.Label("🤖 Select ML Model:", style={'fontWeight': 'bold', 'marginBottom': '5px'}),
+                        html.Label("Select ML Model:", style={'fontWeight': 'bold', 'marginBottom': '5px'}),
                         dcc.Dropdown(
                             id='model-dropdown',
                             options=[
-                                {'label': '🔴 A1 - Linear Regression (R² = 68.64%)', 'value': 'A1'},
-                                {'label': '🟡 A2 - Enhanced Regression (R² = 91.01%)', 'value': 'A2'},
-                                {'label': '🟢 A3 - Smart Classification (Acc = 70.48%)', 'value': 'A3'}
+                                {'label': 'A1 - Linear Regression (R² = 68.64%)', 'value': 'A1'},
+                                {'label': 'A2 - Enhanced Regression (R² = 91.01%)', 'value': 'A2'},
+                                {'label': 'A3 - Smart Classification (Acc = 70.48%)', 'value': 'A3'}
                             ],
                             value='A3',
-                            style={'marginBottom': '15px'}
+                            style={'marginBottom': '20px'}
                         ),
                         
                         html.Div([
                             html.Div([
-                                html.Label("📅 Year:", style={'fontWeight': 'bold'}),
+                                html.Label("Year:", style={'fontWeight': 'bold'}),
                                 dcc.Input(id='year-input', type='number', value=2015, 
                                          min=2000, max=2024, style=input_style)
                             ], style={'width': '48%', 'display': 'inline-block', 'marginRight': '4%'}),
                             
                             html.Div([
-                                html.Label("🛣️ KM Driven:", style={'fontWeight': 'bold'}),
+                                html.Label("KM Driven:", style={'fontWeight': 'bold'}),
                                 dcc.Input(id='km-input', type='number', value=50000, 
                                          min=0, style=input_style)
                             ], style={'width': '48%', 'display': 'inline-block'})
@@ -283,70 +283,77 @@ def render_content(active_tab):
                         
                         html.Div([
                             html.Div([
-                                html.Label("⛽ Fuel Type:", style={'fontWeight': 'bold'}),
+                                html.Label("Fuel Type:", style={'fontWeight': 'bold'}),
                                 dcc.Dropdown(id='fuel-dropdown',
-                                           options=[{'label': '⛽ Petrol', 'value': 'Petrol'},
-                                                  {'label': '🛢️ Diesel', 'value': 'Diesel'},
-                                                  {'label': '🌿 CNG', 'value': 'CNG'}],
+                                           options=[{'label': 'Petrol', 'value': 'Petrol'},
+                                                  {'label': 'Diesel', 'value': 'Diesel'},
+                                                  {'label': 'CNG', 'value': 'CNG'}],
                                            value='Petrol', style={'marginBottom': '20px'})
                             ], style={'width': '48%', 'display': 'inline-block', 'marginRight': '4%'}),
                             
                             html.Div([
-                                html.Label("🏪 Seller Type:", style={'fontWeight': 'bold'}),
+                                html.Label("Seller Type:", style={'fontWeight': 'bold'}),
                                 dcc.Dropdown(id='seller-dropdown',
-                                           options=[{'label': '👤 Individual', 'value': 'Individual'},
-                                                  {'label': '🏢 Dealer', 'value': 'Dealer'}],
+                                           options=[{'label': 'Individual', 'value': 'Individual'},
+                                                  {'label': 'Dealer', 'value': 'Dealer'}],
                                            value='Individual', style={'marginBottom': '20px'})
                             ], style={'width': '48%', 'display': 'inline-block'})
                         ], style={'marginBottom': '15px'}),
                         
                         html.Div([
                             html.Div([
-                                html.Label("⚙️ Transmission:", style={'fontWeight': 'bold'}),
+                                html.Label("Transmission:", style={'fontWeight': 'bold'}),
                                 dcc.Dropdown(id='transmission-dropdown',
-                                           options=[{'label': '🔧 Manual', 'value': 'Manual'},
-                                                  {'label': '🤖 Automatic', 'value': 'Automatic'}],
-                                           value='Manual', style={'marginBottom': '15px'})
-                            ], className='mobile-full', style={'width': '48%', 'display': 'inline-block', 'marginRight': '4%'}),
+                                           options=[{'label': 'Manual', 'value': 'Manual'},
+                                                  {'label': 'Automatic', 'value': 'Automatic'}],
+                                           value='Manual', style={'marginBottom': '20px'})
+                            ], style={'width': '48%', 'display': 'inline-block', 'marginRight': '4%'}),
                             
                             html.Div([
-                                html.Label("👥 Owner Type:", style={'fontWeight': 'bold'}),
+                                html.Label("Owner Type:", style={'fontWeight': 'bold'}),
                                 dcc.Dropdown(id='owner-dropdown',
-                                           options=[{'label': '1️⃣ First Owner', 'value': 'First Owner'},
-                                                  {'label': '2️⃣ Second Owner', 'value': 'Second Owner'},
-                                                  {'label': '3️⃣ Third Owner', 'value': 'Third Owner'},
-                                                  {'label': '4️⃣+ Fourth & Above', 'value': 'Fourth & Above Owner'}],
-                                           value='First Owner', style={'marginBottom': '15px'})
-                            ], className='mobile-full', style={'width': '48%', 'display': 'inline-block'})
-                        ], className='mobile-stack', style={'display': 'flex'}),
+                                           options=[{'label': 'First Owner', 'value': 'First Owner'},
+                                                  {'label': 'Second Owner', 'value': 'Second Owner'},
+                                                  {'label': 'Third Owner', 'value': 'Third Owner'},
+                                                  {'label': 'Fourth & Above', 'value': 'Fourth & Above Owner'}],
+                                           value='First Owner', style={'marginBottom': '20px'})
+                            ], style={'width': '48%', 'display': 'inline-block'})
+                        ], style={'marginBottom': '15px'}),
                         
                         html.Div([
                             html.Div([
-                                html.Label("📊 Mileage (kmpl):", style={'fontWeight': 'bold'}),
+                                html.Label("Mileage (kmpl):", style={'fontWeight': 'bold'}),
                                 dcc.Input(id='mileage-input', type='number', value=20, 
                                          min=5, max=50, style=input_style)
-                            ], className='mobile-full', style={'width': '32%', 'display': 'inline-block', 'marginRight': '2%'}),
+                            ], style={'width': '32%', 'display': 'inline-block', 'marginRight': '2%'}),
                             
                             html.Div([
-                                html.Label("🔧 Engine (CC):", style={'fontWeight': 'bold'}),
+                                html.Label("Engine (CC):", style={'fontWeight': 'bold'}),
                                 dcc.Input(id='engine-input', type='number', value=1200, 
                                          min=500, max=5000, style=input_style)
-                            ], className='mobile-full', style={'width': '32%', 'display': 'inline-block', 'marginRight': '2%'}),
+                            ], style={'width': '32%', 'display': 'inline-block', 'marginRight': '2%'}),
                             
                             html.Div([
-                                html.Label("⚡ Max Power (bhp):", style={'fontWeight': 'bold'}),
+                                html.Label("Max Power (bhp):", style={'fontWeight': 'bold'}),
                                 dcc.Input(id='power-input', type='number', value=80, 
                                          min=30, max=500, style=input_style)
-                            ], className='mobile-full', style={'width': '32%', 'display': 'inline-block'})
-                        ], className='mobile-stack', style={'display': 'flex', 'marginBottom': '10px'}),
+                            ], style={'width': '32%', 'display': 'inline-block'})
+                        ], style={'marginBottom': '15px'}),
                         
-                        html.Label("💺 Seats:", style={'fontWeight': 'bold'}),
+                        html.Label("Seats:", style={'fontWeight': 'bold'}),
                         dcc.Input(id='seats-input', type='number', value=5, 
                                  min=2, max=8, style=input_style),
                         
-                        html.Div(style={'height': '20px'}),  # Add spacing before button
-                        html.Button('🎯 Predict Price', id='predict-button', n_clicks=0, 
-                                   style={**button_style, 'marginTop': '15px'})
+                        html.Div(style={'height': '20px'}),
+                        html.Button('PREDICT PRICE', id='predict-button', n_clicks=0, 
+                                   style={
+                                       'backgroundColor': '#3498db', 'color': 'white', 
+                                       'padding': '15px 30px', 'border': 'none', 
+                                       'borderRadius': '8px', 'cursor': 'pointer', 
+                                       'width': '100%', 'fontSize': '16px', 
+                                       'fontWeight': 'bold', 'marginTop': '15px',
+                                       'textTransform': 'uppercase', 'letterSpacing': '1px'
+                                   })
                         
                     ], style={
                         'width': '47%', 'display': 'inline-block', 'verticalAlign': 'top',
@@ -356,7 +363,7 @@ def render_content(active_tab):
                     
                     # Results - better spacing and alignment
                     html.Div([
-                        html.H4("📊 Prediction Results", style={'color': colors['primary'], 'textAlign': 'center', 'marginBottom': '20px'}),
+                        html.H4("Prediction Results", style={'color': colors['primary'], 'textAlign': 'center', 'marginBottom': '20px'}),
                         html.Div(id='prediction-output', style={
                             'padding': '20px', 'backgroundColor': '#f8f9fa',
                             'borderRadius': '12px', 'minHeight': '300px',
@@ -674,14 +681,16 @@ def update_price_dist(tab):
         return go.Figure()
     
     fig = px.histogram(data, x='selling_price', nbins=40, 
-                      title='💰 Price Distribution Analysis',
+                      title='Price Distribution Analysis',
                       labels={'selling_price': 'Selling Price', 'count': 'Number of Cars'},
                       color_discrete_sequence=[colors['primary']])
     
     fig.add_vline(x=data['selling_price'].mean(), line_dash="dash", 
-                  annotation_text=f"Mean: {data['selling_price'].mean():,.0f}")
+                  annotation_text=f"Mean: {data['selling_price'].mean():,.0f}",
+                  annotation_position="top")
     fig.add_vline(x=data['selling_price'].median(), line_dash="dot", 
-                  annotation_text=f"Median: {data['selling_price'].median():,.0f}")
+                  annotation_text=f"Median: {data['selling_price'].median():,.0f}",
+                  annotation_position="bottom")
     
     fig.update_layout(template='plotly_white', showlegend=False,
                      title_font_size=16, title_x=0.5)
