@@ -81,19 +81,20 @@ jobs:
     - name: Copy docker-compose to server
       uses: appleboy/scp-action@v0.1.7
       with:
-        host: ${{ secrets.REMOTE_HOST }}
+        host: ml.brain.cs.ait.ac.th
         username: ${{ secrets.REMOTE_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         proxy_host: ${{ secrets.PROXY_HOST }}
         proxy_username: ${{ secrets.PROXY_USER }}
         proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: "docker-compose-server.yml"
-        target: "~/st126010/car-predictor/docker-compose.yml"
+        target: "~/st126010/car-predictor/"
+        strip_components: 0
     
     - name: Deploy to remote server
       uses: appleboy/ssh-action@v1.0.0
       with:
-        host: ${{ secrets.REMOTE_HOST }}
+        host: ml.brain.cs.ait.ac.th
         username: ${{ secrets.REMOTE_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         proxy_host: ${{ secrets.PROXY_HOST }}
@@ -102,7 +103,7 @@ jobs:
         timeout: 60s
         script: |
           cd ~/st126010/car-predictor
-          which docker
+          mv docker-compose-server.yml docker-compose.yml
           docker compose down || true
           docker pull shadowsilence94/car-price-predict:latest
           docker compose up -d
