@@ -198,23 +198,31 @@ def render_content(active_tab):
                     html.H3("3", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("ML Models", style={'margin': '5px 0'})
                 ], className='metric-card', style={
-                    'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%', 
+                    'width': '25%', 'display': 'inline-block', 'margin': '0 1.5%', 
                     'verticalAlign': 'top', 'minHeight': '120px'
                 }),
                 
                 html.Div([
-                    html.H3("70.15%", style={'fontSize': '36px', 'margin': '0'}),
-                    html.P("Best R² Score", style={'margin': '5px 0'})
+                    html.H3("76.57%", style={'fontSize': '36px', 'margin': '0'}),
+                    html.P("Linear Regression", style={'margin': '5px 0'})
                 ], className='metric-card', style={
-                    'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%', 
+                    'width': '25%', 'display': 'inline-block', 'margin': '0 1.5%', 
+                    'verticalAlign': 'top', 'minHeight': '120px'
+                }),
+                
+				 html.Div([
+                    html.H3("70.15%", style={'fontSize': '36px', 'margin': '0'}),
+                    html.P("Enhanced Linear Regression", style={'margin': '5px 0'})
+                ], className='metric-card', style={
+                    'width': '25%', 'display': 'inline-block', 'margin': '0 1.5%', 
                     'verticalAlign': 'top', 'minHeight': '120px'
                 }),
                 
                 html.Div([
                     html.H3("74.05%", style={'fontSize': '36px', 'margin': '0'}),
-                    html.P("Classification Accuracy", style={'margin': '5px 0'})
+                    html.P("Logistic Classification", style={'margin': '5px 0'})
                 ], className='metric-card', style={
-                    'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%', 
+                    'width': '25%', 'display': 'inline-block', 'margin': '0 1.5%', 
                     'verticalAlign': 'top', 'minHeight': '120px'
                 })
             ], style={'textAlign': 'center', 'marginBottom': '40px', 'whiteSpace': 'nowrap'}),
