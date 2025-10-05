@@ -688,22 +688,46 @@ def update_correlation_heatmap(tab):
     if data.empty:
         return go.Figure()
     
-    # Select numeric columns for correlation
-    numeric_cols = ['year', 'selling_price', 'km_driven', 'mileage', 'engine', 'max_power', 'seats']
-    available_cols = [col for col in numeric_cols if col in data.columns]
-    
-    if len(available_cols) < 2:
-        return go.Figure()
-    
-    corr_matrix = data[available_cols].corr()
-    
-    fig = px.imshow(corr_matrix, 
-                   title='🔗 Feature Correlation Matrix',
-                   color_continuous_scale='RdBu_r',
-                   aspect='auto')
-    
-    fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
-    return fig
+    try:
+        # Clean and prepare numeric columns
+        data_clean = data.copy()
+        
+        # Clean mileage column (remove 'kmpl')
+        if 'mileage' in data_clean.columns:
+            data_clean['mileage'] = pd.to_numeric(data_clean['mileage'].astype(str).str.replace(' kmpl', '').str.replace(' km/kg', ''), errors='coerce')
+        
+        # Clean engine column (remove 'CC')
+        if 'engine' in data_clean.columns:
+            data_clean['engine'] = pd.to_numeric(data_clean['engine'].astype(str).str.replace(' CC', ''), errors='coerce')
+        
+        # Clean max_power column (remove 'bhp')
+        if 'max_power' in data_clean.columns:
+            data_clean['max_power'] = pd.to_numeric(data_clean['max_power'].astype(str).str.replace(' bhp', ''), errors='coerce')
+        
+        # Select numeric columns for correlation
+        numeric_cols = ['year', 'selling_price', 'km_driven', 'mileage', 'engine', 'max_power', 'seats']
+        available_cols = [col for col in numeric_cols if col in data_clean.columns]
+        
+        if len(available_cols) < 2:
+            return go.Figure().add_annotation(text="Not enough numeric data for correlation", 
+                                            xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False)
+        
+        # Calculate correlation matrix
+        corr_data = data_clean[available_cols].select_dtypes(include=[np.number])
+        corr_matrix = corr_data.corr()
+        
+        fig = px.imshow(corr_matrix, 
+                       title='🔗 Feature Correlation Matrix',
+                       color_continuous_scale='RdBu_r',
+                       aspect='auto',
+                       text_auto=True)
+        
+        fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
+        return fig
+        
+    except Exception as e:
+        return go.Figure().add_annotation(text=f"Error loading correlation data", 
+                                        xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False)
 
 @callback(Output('brand-analysis', 'figure'), Input('tabs', 'value'))
 def update_brand_analysis(tab):
@@ -748,14 +772,39 @@ def update_mileage_price(tab):
     if data.empty:
         return go.Figure()
     
-    fig = px.scatter(data, x='mileage', y='selling_price', 
-                    color='fuel', size='engine',
-                    title='📊 Mileage vs Price Analysis',
-                    labels={'mileage': 'Mileage (kmpl)', 'selling_price': 'Price (₹)'},
-                    hover_data=['year', 'km_driven'])
-    
-    fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
-    return fig
+    try:
+        # Clean data
+        data_clean = data.copy()
+        
+        # Clean mileage column
+        if 'mileage' in data_clean.columns:
+            data_clean['mileage'] = pd.to_numeric(data_clean['mileage'].astype(str).str.replace(' kmpl', '').str.replace(' km/kg', ''), errors='coerce')
+        
+        # Clean engine column for size
+        if 'engine' in data_clean.columns:
+            data_clean['engine'] = pd.to_numeric(data_clean['engine'].astype(str).str.replace(' CC', ''), errors='coerce')
+        
+        # Remove rows with missing mileage data
+        data_clean = data_clean.dropna(subset=['mileage', 'selling_price'])
+        
+        if data_clean.empty:
+            return go.Figure().add_annotation(text="No valid mileage data available", 
+                                            xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False)
+        
+        # Create scatter plot
+        fig = px.scatter(data_clean, x='mileage', y='selling_price', 
+                        color='fuel' if 'fuel' in data_clean.columns else None,
+                        size='engine' if 'engine' in data_clean.columns and not data_clean['engine'].isna().all() else None,
+                        title='📊 Mileage vs Price Analysis',
+                        labels={'mileage': 'Mileage (kmpl)', 'selling_price': 'Price (₹)'},
+                        hover_data=['year', 'km_driven'] if all(col in data_clean.columns for col in ['year', 'km_driven']) else None)
+        
+        fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
+        return fig
+        
+    except Exception as e:
+        return go.Figure().add_annotation(text="Error loading mileage data", 
+                                        xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False)
 
 @callback(Output('age-depreciation', 'figure'), Input('tabs', 'value'))
 def update_age_depreciation(tab):
