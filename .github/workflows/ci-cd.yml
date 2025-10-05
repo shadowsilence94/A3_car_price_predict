@@ -76,6 +76,8 @@ jobs:
     environment: production
     
     steps:
+    - uses: actions/checkout@v4
+    
     - name: Deploy to remote server
       uses: appleboy/ssh-action@v1.0.0
       with:
@@ -87,12 +89,28 @@ jobs:
         proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
         timeout: 60s
         script: |
-          echo "Current directory: $(pwd)"
-          echo "Home directory: $HOME"
-          ls -la
-          cd ~/car-predictor || cd ./car-predictor || { echo "car-predictor directory not found"; exit 1; }
-          echo "In car-predictor directory: $(pwd)"
-          docker compose down || true
-          docker pull shadowsilence94/car-price-predict:${{ github.ref_name }} || docker pull shadowsilence94/car-price-predict:latest
-          docker compose up -d
-          docker system prune -f
+          /bin/bash -c '
+          echo "Setting up deployment directory"
+          mkdir -p car-predictor
+          cd car-predictor
+          cat > docker-compose.yml << EOF
+          version: "3.8"
+          services:
+            car-price-app:
+              image: shadowsilence94/car-price-predict:latest
+              ports:
+                - "8050:8050"
+              restart: unless-stopped
+              environment:
+                - PYTHONUNBUFFERED=1
+          EOF
+          echo "Stopping existing containers"
+          /usr/local/bin/docker compose down || true
+          echo "Pulling latest image"
+          /usr/local/bin/docker pull shadowsilence94/car-price-predict:latest
+          echo "Starting new containers"
+          /usr/local/bin/docker compose up -d
+          echo "Cleaning up old images"
+          /usr/local/bin/docker system prune -f
+          echo "Deployment completed successfully"
+          '
