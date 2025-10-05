@@ -251,7 +251,7 @@ def render_content(active_tab):
     elif active_tab == 'prediction':
         return html.Div([
             html.Div([
-                html.H2("🔮 Intelligent Car Price Prediction", style={'color': colors['dark'], 'marginBottom': '20px'}),
+                html.H2("Intelligent Car Price Prediction", style={'color': colors['dark'], 'marginBottom': '20px'}),
                 
                 html.Div([
                     # Input form - better spacing and alignment
@@ -386,7 +386,7 @@ def render_content(active_tab):
     
     elif active_tab == 'analytics':
         return html.Div([
-            html.H2("📈 Advanced Data Analytics", style={'color': colors['dark'], 'marginBottom': '30px'}),
+            html.H2("Advanced Data Analytics", style={'color': colors['dark'], 'marginBottom': '30px'}),
             
             # Summary Statistics
             html.Div([
@@ -732,7 +732,7 @@ def update_year_trend(tab):
     fig.update_xaxes(title_text="Year")
     fig.update_yaxes(title_text="Average Price", secondary_y=False)
     fig.update_yaxes(title_text="Number of Cars", secondary_y=True)
-    fig.update_layout(title='📅 Price Trends Over Years', template='plotly_white',
+    fig.update_layout(title='Price Trends Over Years', template='plotly_white',
                      title_font_size=16, title_x=0.5)
     return fig
 
@@ -744,7 +744,7 @@ def update_fuel_analysis(tab):
     fuel_stats = data.groupby('fuel')['selling_price'].agg(['mean', 'count']).reset_index()
     
     fig = px.box(data, x='fuel', y='selling_price', 
-                title='⛽ Price Distribution by Fuel Type',
+                title='Price Distribution by Fuel Type',
                 labels={'selling_price': 'Price', 'fuel': 'Fuel Type'},
                 color='fuel', color_discrete_sequence=px.colors.qualitative.Set2)
     
@@ -786,7 +786,7 @@ def update_correlation_heatmap(tab):
         corr_matrix = corr_data.corr()
         
         fig = px.imshow(corr_matrix, 
-                       title='🔗 Feature Correlation Matrix',
+                       title='Feature Correlation Matrix',
                        color_continuous_scale='RdBu_r',
                        aspect='auto',
                        text_auto=True)
@@ -813,7 +813,7 @@ def update_brand_analysis(tab):
     brand_stats = brand_stats[brand_stats['count'] >= 10].sort_values('avg_price', ascending=True)
     
     fig = px.bar(brand_stats.reset_index(), x='avg_price', y='brand',
-                title='🏷️ Average Price by Brand (Min 10 cars)',
+                title='Average Price by Brand (Min 10 cars)',
                 labels={'avg_price': 'Average Price', 'brand': 'Brand'},
                 orientation='h', color='avg_price',
                 color_continuous_scale='viridis')
@@ -829,7 +829,7 @@ def update_owner_impact(tab):
     owner_stats = data.groupby('owner')['selling_price'].agg(['mean', 'count']).reset_index()
     
     fig = px.bar(owner_stats, x='owner', y='mean',
-                title='👥 Price Impact by Owner Type',
+                title='Price Impact by Owner Type',
                 labels={'mean': 'Average Price', 'owner': 'Owner Type'},
                 color='mean', color_continuous_scale='blues')
     
@@ -886,7 +886,7 @@ def update_age_depreciation(tab):
     age_stats = data.groupby('age')['selling_price'].mean().reset_index()
     
     fig = px.line(age_stats, x='age', y='selling_price',
-                 title='📉 Car Depreciation by Age',
+                 title='Car Depreciation by Age',
                  labels={'age': 'Car Age (Years)', 'selling_price': 'Average Price'},
                  markers=True, line_shape='spline')
     
