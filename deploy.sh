@@ -5,23 +5,23 @@
 
 set -e
 
-IMAGE_NAME="car-price-classifier"
-REGISTRY_URL="https://hub.docker.com/repositories/shadowsilence94"  # Replace with your registry
+IMAGE_NAME="car-price-predict"
+REGISTRY_URL="shadowsilence94/car-price-predict"  # Replace with your registry
 TAG="latest"
 
 case "$1" in
     "push")
         echo "🚀 Building and pushing Docker image..."
         docker build -t $IMAGE_NAME:$TAG .
-        docker tag $IMAGE_NAME:$TAG $REGISTRY_URL/$IMAGE_NAME:$TAG
-        docker push $REGISTRY_URL/$IMAGE_NAME:$TAG
+        docker tag $IMAGE_NAME:$TAG $REGISTRY_URL:$TAG
+        docker push $REGISTRY_URL:$TAG
         echo "✅ Image pushed successfully!"
         ;;
     
     "pull")
         echo "📥 Pulling Docker image..."
-        docker pull $REGISTRY_URL/$IMAGE_NAME:$TAG
-        docker tag $REGISTRY_URL/$IMAGE_NAME:$TAG $IMAGE_NAME:$TAG
+        docker pull $REGISTRY_URL:$TAG
+        docker tag $REGISTRY_URL:$TAG $IMAGE_NAME:$TAG
         echo "✅ Image pulled successfully!"
         ;;
     

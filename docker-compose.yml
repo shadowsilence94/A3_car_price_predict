@@ -1,6 +1,7 @@
 services:
   car-price-app:
     build: .
+    image: shadowsilence94/car-price-predict:latest
     ports:
       - "8050:8050"
     environment:

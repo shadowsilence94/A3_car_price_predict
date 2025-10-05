@@ -15,10 +15,10 @@ echo "🛑 Stopping current containers..."
 docker compose down
 
 echo "🗑️ Removing old images..."
-docker image rm shadowsilence94/car-price-predit:latest || true
+docker image rm shadowsilence94/car-price-predict:latest || true
 
 echo "⬇️ Pulling latest image..."
-docker pull shadowsilence94/car-price-predit:latest
+docker pull shadowsilence94/car-price-predict:latest
 
 echo "🔍 Checking docker-compose.yml..."
 cat docker-compose.yml

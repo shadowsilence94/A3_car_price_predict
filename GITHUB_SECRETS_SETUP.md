@@ -7,8 +7,8 @@ To enable automated CI/CD deployment, you need to set up the following secrets i
 Go to your GitHub repository → Settings → Secrets and variables → Actions → New repository secret
 
 ### Docker Hub Secrets
-1. **DOCKERHUB_USERNAME**: Your Docker Hub username
-2. **DOCKERHUB_TOKEN**: Your Docker Hub access token
+1. **DOCKER_HUB_USERNAME**: Your Docker Hub username
+2. **DOCKER_HUB_TOKEN**: Your Docker Hub access token
    - Go to Docker Hub → Account Settings → Security → New Access Token
 
 ### Server Deployment Secrets
@@ -41,9 +41,9 @@ Create a production environment in GitHub:
 
 ## Testing the Setup
 
-1. Push code to main branch
+1. Push code to main branch with a tag (e.g., v1.0.0)
 2. Check Actions tab for workflow execution
-3. Verify Docker image is pushed to Docker Hub
+3. Verify Docker image is pushed to Docker Hub with name shadowsilence94/car-price-predict
 4. Confirm deployment on mlbrain server
 
 ## Troubleshooting
@@ -52,3 +52,4 @@ Create a production environment in GitHub:
 - Verify server can pull from Docker Hub
 - Check firewall settings for port 8050
 - Monitor GitHub Actions logs for errors
+- Make sure to create git tags (v*) to trigger the build-and-push and deploy jobs

@@ -13,7 +13,7 @@
 #### Option 1: Direct Docker Commands
 ```bash
 # Build image
-docker build -t car-price-classifier .
+docker build -t car-price-predict .
 
 # Run with docker-compose
 docker-compose up -d
@@ -44,22 +44,22 @@ chmod +x deploy.sh
 1. **On macOS (Development Machine):**
    ```bash
    # Build multi-platform image
-   docker buildx build --platform linux/amd64,linux/arm64 -t car-price-classifier .
+   docker buildx build --platform linux/amd64,linux/arm64 -t car-price-predict .
    
    # Or build for specific Linux architecture
-   docker buildx build --platform linux/amd64 -t car-price-classifier .
+   docker buildx build --platform linux/amd64 -t car-price-predict .
    
    # Save image to file
-   docker save car-price-classifier > car-price-classifier.tar
+   docker save car-price-predict > car-price-predict.tar
    
    # Transfer to Linux server
-   scp car-price-classifier.tar user@server:/path/to/deployment/
+   scp car-price-predict.tar user@server:/path/to/deployment/
    ```
 
 2. **On Linux Server:**
    ```bash
    # Load image
-   docker load < car-price-classifier.tar
+   docker load < car-price-predict.tar
    
    # Run with docker-compose
    docker-compose up -d
@@ -70,19 +70,19 @@ chmod +x deploy.sh
 1. **Push from macOS:**
    ```bash
    # Tag for registry
-   docker tag car-price-classifier your-registry.com/car-price-classifier
+   docker tag car-price-predict shadowsilence94/car-price-predict
    
    # Push to registry
-   docker push your-registry.com/car-price-classifier
+   docker push shadowsilence94/car-price-predict
    ```
 
 2. **Pull on Linux Server:**
    ```bash
    # Pull from registry
-   docker pull your-registry.com/car-price-classifier
+   docker pull shadowsilence94/car-price-predict
    
    # Tag locally
-   docker tag your-registry.com/car-price-classifier car-price-classifier
+   docker tag shadowsilence94/car-price-predict car-price-predict
    
    # Deploy
    docker-compose up -d
