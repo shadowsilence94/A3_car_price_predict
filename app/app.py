@@ -52,7 +52,7 @@ model_comparison = pd.DataFrame({
     'Assignment': ['A1', 'A2', 'A3'],
     'Model Type': ['Linear Regression', 'Enhanced Linear Regression', 'Logistic Classification'],
     'Problem Type': ['Regression', 'Regression', 'Classification'],
-    'Best Score': ['R² = 0.7657', 'R² = 0.9101', 'Accuracy = 74.05%'],
+    'Best Score': ['R² = 0.7657', 'R² = 0.7015', 'Accuracy = 74.05%'],
     'Key Features': ['Proper ML pipeline + log transform', 'Polynomial features + Lasso regularization', 'Custom logistic regression + Ridge penalty']
 })
 
@@ -134,6 +134,10 @@ input_style = {
     'border': '1px solid #ddd', 'marginBottom': '20px', 'fontSize': '14px'
 }
 
+dropdown_style = {
+    'width': '100%', 'marginBottom': '20px', 'fontSize': '14px'
+}
+
 button_style = {
     'backgroundColor': '#3498db', 'color': 'white', 'padding': '12px 24px',
     'border': 'none', 'borderRadius': '8px', 'cursor': 'pointer', 'width': '100%',
@@ -184,7 +188,7 @@ app.layout = html.Div([
     'backgroundColor': '#f8f9fa', 'minHeight': '100vh', 'margin': '0', 'padding': '0'
 })
 
-@callback(Output('tab-content', 'children'), Input('tabs', 'value'))
+@app.callback(Output('tab-content', 'children'), Input('tabs', 'value'))
 def render_content(active_tab):
     if active_tab == 'comparison':
         return html.Div([
@@ -199,7 +203,7 @@ def render_content(active_tab):
                 }),
                 
                 html.Div([
-                    html.H3("91.01%", style={'fontSize': '36px', 'margin': '0'}),
+                    html.H3("70.15%", style={'fontSize': '36px', 'margin': '0'}),
                     html.P("Best R² Score", style={'margin': '5px 0'})
                 ], className='metric-card', style={
                     'width': '30%', 'display': 'inline-block', 'margin': '0 1.5%', 
@@ -251,10 +255,11 @@ def render_content(active_tab):
     elif active_tab == 'prediction':
         return html.Div([
             html.Div([
-                html.H2("Intelligent Car Price Prediction", style={'color': colors['dark'], 'marginBottom': '20px'}),
+                html.H2("Intelligent Car Price Prediction", style={'color': colors['dark'], 'marginBottom': '20px', 'textAlign': 'center'}),
                 
+                # Side by side layout wrapper
                 html.Div([
-                    # Input form - better spacing and alignment
+                    # Left side - Input form
                     html.Div([
                         html.H4("Vehicle Configuration", style={'color': colors['primary'], 'textAlign': 'center', 'marginBottom': '20px'}),
                         
@@ -263,7 +268,7 @@ def render_content(active_tab):
                             id='model-dropdown',
                             options=[
                                 {'label': 'A1 - Linear Regression (R² = 76.57%)', 'value': 'A1'},
-                                {'label': 'A2 - Enhanced Regression (R² = 91.01%)', 'value': 'A2'},
+                                {'label': 'A2 - Enhanced Regression (R² = 70.15%)', 'value': 'A2'},
                                 {'label': 'A3 - Smart Classification (Acc = 74.05%)', 'value': 'A3'}
                             ],
                             value='A3',
@@ -347,6 +352,26 @@ def render_content(active_tab):
                         dcc.Input(id='seats-input', type='number', value=5, 
                                  min=2, max=8, style=input_style),
                         
+                        html.Div(style={'height': '15px'}),
+                        html.Label("Brand:", style={'fontWeight': 'bold'}),
+                        dcc.Dropdown(
+                            id='brand-dropdown',
+                            options=[
+                                {'label': 'Maruti', 'value': 'Maruti'},
+                                {'label': 'Hyundai', 'value': 'Hyundai'},
+                                {'label': 'Honda', 'value': 'Honda'},
+                                {'label': 'Toyota', 'value': 'Toyota'},
+                                {'label': 'Tata', 'value': 'Tata'},
+                                {'label': 'Mahindra', 'value': 'Mahindra'},
+                                {'label': 'Ford', 'value': 'Ford'},
+                                {'label': 'Chevrolet', 'value': 'Chevrolet'},
+                                {'label': 'Renault', 'value': 'Renault'},
+                                {'label': 'Nissan', 'value': 'Nissan'}
+                            ],
+                            value='Maruti',
+                            style=dropdown_style
+                        ),
+                        
                         html.Div(style={'height': '20px'}),
                         html.Button('PREDICT PRICE', id='predict-button', n_clicks=0, 
                                    style={
@@ -361,26 +386,26 @@ def render_content(active_tab):
                                    })
                         
                     ], style={
-                        'width': '47%', 'display': 'inline-block', 'verticalAlign': 'top',
-                        'margin': '0 1.5%', 'backgroundColor': 'white', 'padding': '20px',
-                        'borderRadius': '12px', 'boxShadow': '0 4px 12px rgba(0,0,0,0.1)'
+                        'flex': '1', 'minWidth': '400px', 'backgroundColor': 'white', 'padding': '20px',
+                        'borderRadius': '12px', 'boxShadow': '0 4px 12px rgba(0,0,0,0.1)',
+                        'minHeight': '600px'
                     }),
                     
-                    # Results - better spacing and alignment
+                    # Right side - Results
                     html.Div([
                         html.H4("Prediction Results", style={'color': colors['primary'], 'textAlign': 'center', 'marginBottom': '20px'}),
                         html.Div(id='prediction-output', style={
                             'padding': '20px', 'backgroundColor': '#f8f9fa',
-                            'borderRadius': '12px', 'minHeight': '300px',
-                            'border': '2px dashed #dee2e6'
+                            'borderRadius': '12px', 'minHeight': '500px',
+                            'border': '2px dashed #dee2e6', 'textAlign': 'left'
                         })
                     ], style={
-                        'width': '47%', 'display': 'inline-block', 'verticalAlign': 'top',
-                        'margin': '0 1.5%', 'backgroundColor': 'white', 'padding': '20px',
-                        'borderRadius': '12px', 'boxShadow': '0 4px 12px rgba(0,0,0,0.1)'
+                        'flex': '1', 'minWidth': '400px', 'backgroundColor': 'white', 'padding': '20px',
+                        'borderRadius': '12px', 'boxShadow': '0 4px 12px rgba(0,0,0,0.1)',
+                        'minHeight': '600px'
                     })
                     
-                ], style={'textAlign': 'center'})
+                ], style={'display': 'flex', 'gap': '20px', 'alignItems': 'flex-start', 'flexWrap': 'wrap'})
             ], style=card_style)
         ])
     
@@ -475,7 +500,7 @@ def render_content(active_tab):
 
 def create_comparison_chart():
     models_list = ['A1 Linear', 'A2 Enhanced', 'A3 Classification']
-    scores = [0.7657, 0.9101, 0.7405]  # Updated with current actual results
+    scores = [0.7657, 0.7015, 0.7405]  # Updated with current actual results
     
     fig = go.Figure()
     fig.add_trace(go.Bar(
@@ -493,7 +518,7 @@ def create_comparison_chart():
     )
     return fig
 
-@callback(
+@app.callback(
     Output('prediction-output', 'children'),
     [Input('predict-button', 'n_clicks')],
     [Input('model-dropdown', 'value'), Input('year-input', 'value'),
@@ -501,16 +526,16 @@ def create_comparison_chart():
      Input('seller-dropdown', 'value'), Input('transmission-dropdown', 'value'),
      Input('owner-dropdown', 'value'), Input('mileage-input', 'value'),
      Input('engine-input', 'value'), Input('power-input', 'value'),
-     Input('seats-input', 'value')]
+     Input('seats-input', 'value'), Input('brand-dropdown', 'value')]
 )
-def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, owner, mileage, engine, power, seats):
+def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, owner, mileage, engine, power, seats, brand):
     if n_clicks == 0:
         return html.Div([
             html.P("Select model and enter car details, then click 'Predict Price'"),
             html.P("Available models:"),
             html.Ul([
-                html.Li("A1: Linear Regression (R² = 0.6040)"),
-                html.Li("A2: Enhanced with Polynomial Features (R² = 0.8472)"),
+                html.Li("A1: Linear Regression (R² = 0.7657)"),
+                html.Li("A2: Enhanced with Polynomial Features + Custom Lasso (R² = 0.7015)"),
                 html.Li("A3: Car Price Classification (74.05% accuracy)")
             ])
         ])
@@ -523,16 +548,18 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
             fuel_encoded = model_data['label_encoders']['fuel'].transform([fuel])[0]
             seller_encoded = model_data['label_encoders']['seller_type'].transform([seller])[0]
             transmission_encoded = model_data['label_encoders']['transmission'].transform([transmission])[0]
-            owner_encoded = model_data['label_encoders']['owner'].transform([owner])[0]
+            brand_encoded = model_data['label_encoders']['brand'].transform([brand])[0]
             
-            # Create feature array (10 features: 6 numeric + 4 categorical)
-            features = np.array([[year, km, mileage, engine, power, seats, fuel_encoded, seller_encoded, transmission_encoded, owner_encoded]])
+            # Create feature array (11 features: year, km_driven, fuel, seller_type, transmission, owner, mileage, engine, max_power, seats, brand)
+            # Note: owner is not encoded in A1 model, so we use 0 as placeholder
+            features = np.array([[year, km, fuel_encoded, seller_encoded, transmission_encoded, 0, mileage, engine, power, seats, brand_encoded]])
             
             # Scale features
             features_scaled = model_data['scaler'].transform(features)
             
             # Predict
-            prediction = model_data['model'].predict(features_scaled)[0]
+            log_prediction = model_data['model'].predict(features_scaled)[0]
+            prediction = np.exp(log_prediction)  # Convert from log scale back to original scale
             prediction = max(30000, prediction)  # Ensure positive price
             
             return html.Div([
@@ -573,6 +600,13 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
                 html.H3(f"Predicted Price: {prediction:,.0f}", style={'color': '#27ae60'}),
                 html.P(f"Model R² Score: {model_data['metrics']['test_r2']:.4f}"),
                 html.P("✅ Enhanced with polynomial features and Lasso regularization"),
+                html.Div([
+                    html.P("💡 To see different prices, try:", style={'fontWeight': 'bold', 'color': '#2980b9'}),
+                    html.P("• Newer cars (2018+) with low mileage (<20k km) for premium prices"),
+                    html.P("• High-performance specs: >1800cc engine + >150bhp power"),
+                    html.P("• Luxury features: 7+ seats, premium fuel type, dealer sold"),
+                    html.P("• A2 model captures complex feature interactions better than A1")
+                ], style={'backgroundColor': '#f8f9fa', 'padding': '10px', 'borderRadius': '5px', 'margin': '10px 0'}),
                 html.Hr(),
                 html.P("Input Summary:", style={'fontWeight': 'bold'}),
                 html.P(f"Year: {year}, KM: {km:,}, Mileage: {mileage} kmpl"),
@@ -646,7 +680,7 @@ def predict_price(n_clicks, model_choice, year, km, fuel, seller, transmission, 
         ])
 
 # Enhanced analytics callbacks
-@callback(Output('dataset-stats', 'children'), Input('tabs', 'value'))
+@app.callback(Output('dataset-stats', 'children'), Input('tabs', 'value'))
 def update_dataset_stats(tab):
     if data.empty:
         return html.P("No data available")
@@ -680,7 +714,7 @@ def update_dataset_stats(tab):
     
     return html.Div(stats, style={'textAlign': 'center'})
 
-@callback(Output('price-dist', 'figure'), Input('tabs', 'value'))
+@app.callback(Output('price-dist', 'figure'), Input('tabs', 'value'))
 def update_price_dist(tab):
     if data.empty:
         return go.Figure()
@@ -701,7 +735,7 @@ def update_price_dist(tab):
                      title_font_size=16, title_x=0.5)
     return fig
 
-@callback(Output('year-trend', 'figure'), Input('tabs', 'value'))
+@app.callback(Output('year-trend', 'figure'), Input('tabs', 'value'))
 def update_year_trend(tab):
     if data.empty:
         return go.Figure()
@@ -736,7 +770,7 @@ def update_year_trend(tab):
                      title_font_size=16, title_x=0.5)
     return fig
 
-@callback(Output('fuel-analysis', 'figure'), Input('tabs', 'value'))
+@app.callback(Output('fuel-analysis', 'figure'), Input('tabs', 'value'))
 def update_fuel_analysis(tab):
     if data.empty:
         return go.Figure()
@@ -752,7 +786,7 @@ def update_fuel_analysis(tab):
                      title_font_size=16, title_x=0.5)
     return fig
 
-@callback(Output('correlation-heatmap', 'figure'), Input('tabs', 'value'))
+@app.callback(Output('correlation-heatmap', 'figure'), Input('tabs', 'value'))
 def update_correlation_heatmap(tab):
     if data.empty:
         return go.Figure()
@@ -798,7 +832,7 @@ def update_correlation_heatmap(tab):
         return go.Figure().add_annotation(text=f"Error loading correlation data", 
                                         xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False)
 
-@callback(Output('brand-analysis', 'figure'), Input('tabs', 'value'))
+@app.callback(Output('brand-analysis', 'figure'), Input('tabs', 'value'))
 def update_brand_analysis(tab):
     if data.empty or 'name' not in data.columns:
         return go.Figure()
@@ -821,7 +855,7 @@ def update_brand_analysis(tab):
     fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
     return fig
 
-@callback(Output('owner-impact', 'figure'), Input('tabs', 'value'))
+@app.callback(Output('owner-impact', 'figure'), Input('tabs', 'value'))
 def update_owner_impact(tab):
     if data.empty:
         return go.Figure()
@@ -836,7 +870,7 @@ def update_owner_impact(tab):
     fig.update_layout(template='plotly_white', title_font_size=16, title_x=0.5)
     return fig
 
-@callback(Output('mileage-price', 'figure'), Input('tabs', 'value'))
+@app.callback(Output('mileage-price', 'figure'), Input('tabs', 'value'))
 def update_mileage_price(tab):
     if data.empty:
         return go.Figure()
@@ -875,7 +909,7 @@ def update_mileage_price(tab):
         return go.Figure().add_annotation(text="Error loading mileage data", 
                                         xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False)
 
-@callback(Output('age-depreciation', 'figure'), Input('tabs', 'value'))
+@app.callback(Output('age-depreciation', 'figure'), Input('tabs', 'value'))
 def update_age_depreciation(tab):
     if data.empty:
         return go.Figure()
