@@ -101,12 +101,9 @@ jobs:
         proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
         timeout: 60s
         script: |
-          /bin/bash -c '
           cd ~/st126010/car-predictor
-          echo "In directory: $(pwd)"
-          /usr/local/bin/docker compose down || true
-          /usr/local/bin/docker pull shadowsilence94/car-price-predict:latest
-          /usr/local/bin/docker compose up -d
-          /usr/local/bin/docker system prune -f
-          echo "Deployment completed successfully"
-          '
+          which docker
+          docker compose down || true
+          docker pull shadowsilence94/car-price-predict:latest
+          docker compose up -d
+          docker system prune -f
